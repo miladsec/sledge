@@ -1,0 +1,26 @@
+{
+    "name": "miladzamir/sledge",
+    "description": "build awesome",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Milad Dehghan",
+            "email": "milawddehghan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "MiladZamir\\Sledge\\" : "src/"
+        }
+    },
+    "extra": {
+        "laravel" : {
+            "providers" : [
+                "MiladZamir\\Sledge\\SledgeServiceProvider"
+            ]
+        }
+    }
+}
