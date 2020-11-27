@@ -11,6 +11,11 @@ class SledgeServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/sledge'),
             ], 'views');
+
+            $this->publishes([
+                __DIR__.'/../resources/assets' => public_path('sledge'),
+            ], 'assets');
+
         }
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'sledge');
     }
