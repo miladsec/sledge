@@ -24,13 +24,6 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/core/menu/menu-types/vertical-menu.css">
     <!-- END: Page CSS-->
 
-
-
-    <style>
-        *{
-
-        }
-    </style>
     <title> @yield('title') </title>
 </head>
 <body>
@@ -38,9 +31,11 @@
 
 @yield('content')
 
+{{--
 
 <script src="{{ asset('sledge/library/jquery/jquery.js') }}" crossorigin="anonymous"></script>
 <script src="{{ asset('sledge/library/bootstrap/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+--}}
 
 
 
@@ -66,6 +61,8 @@
 
 <!-- BEGIN: Page JS-->
 <script src="/assets/js/scripts/forms/select/form-select2.js"></script>
+
+<script src="/assets/js/scripts/forms/form-tooltip-valid.js"></script>
 <!-- END: Page JS-->
 
 

@@ -10,7 +10,7 @@
                 <div class="mt-5">
 
                     @foreach($ff as $f)
-                            {!! $f !!}
+                        {{ $f }}
                     @endforeach
 
                 </div>
