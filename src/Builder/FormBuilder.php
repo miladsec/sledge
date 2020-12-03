@@ -1,29 +1,30 @@
 <?php
 namespace MiladZamir\Sledge\Builder;
 
-use MiladZamir\Sledge\Helper\UrlFinder;
+use MiladZamir\Sledge\Helper\Helper;
+use MiladZamir\Sledge\Helper\FormConfig;
 
-class FormBuilder extends Field
+class FormBuilder
 {
-    private $config;
-    private $inputClass;
-
-    public function __construct(array $data)
+    private $data = [];
+    private $model;
+    private $formAction;
+    private $formMethod;
+    private $formMethodField;
+    public function __construct($model)
     {
-        $this->config = $data['config'];
-        $this->inputClass = $data['inputClass'];
-    }
+        $this->model = $model;
 
-    public function element($name, $label)
-    {
-        return new Field($name, $label);
+        $formConfig = new FormConfig($this->model);
+        $this->formMethod = $formConfig->method();
+        $this->formMethodField = $formConfig->methodField();
+        $this->formAction = $formConfig->action();
     }
-
     public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class= null, $id= null)
     {
         $data = [
-            'action' => $this->formAction(),
-            'method' => $this->formMethod(),
+            'action' => $this->formAction,
+            'method' => [$this->formMethod, $this->formMethodField],
             'name' => $name,
             'enctype' => $enctype,
             'novalidate' => $novalidate,
@@ -32,22 +33,93 @@ class FormBuilder extends Field
             'class' => $class,
             'id' => $id,
         ];
-
-        return view('sledge::structure.openForm')->with('data', $data);
+        array_push($this->data, view('sledge::structure.openForm')->with('data', $data));
     }
-    public function formAction()
+    public function input($type, $name, $label, $validate=[], $value=null,$placeholder=null, $class=null, $id=null)
     {
-        $urlFinder = new UrlFinder();
-        return $urlFinder->formRoute($this->config);
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'type' => $type,
+            'name' => $name,
+            'value' => $value,
+            'validate' => implode(" ", $validate),
+            'label' => $label,
+            'placeholder' => $placeholder,
+            'class' => $class,
+            'id' => $id,
+        ];
+        array_push($this->data, view('sledge::element.input')->with('data', $data));
     }
-    public function formMethod()
+    public function select($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
     {
-        if ($this->config == 'create')
-            return 'POST';
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'name' => $name,
+            'label' => $label,
+            'dKey' => $dKey,
+            'validate' => implode(" ", $validate),
+            'value' => $value,
+            'old' => $old,
+            'placeholder' => $placeholder,
+            'class' => $class,
+            'id' => $id,
+        ];
+
+        array_push($this->data, view('sledge::element.select')->with('data', $data));
     }
 
+    public function multiSelect($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'name' => $name,
+            'label' => $label,
+            'dKey' => $dKey,
+            'validate' => implode(" ", $validate),
+            'value' => $value,
+            'old' => $old,
+            'placeholder' => $placeholder,
+            'class' => $class,
+            'id' => $id,
+        ];
+        array_push($this->data, view('sledge::element.multiSelect')->with('data', $data));
+    }
+
+    public function checkbox($name, $label, $dKey, $validate=[], $value, $old=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'name' => $name,
+            'label' => $label,
+            'dKey' => $dKey,
+            'validate' => implode(" ", $validate),
+            'value' => $value,
+            'old' => $old,
+            'class' => $class,
+            'id' => $id,
+        ];
+
+        array_push($this->data, view('sledge::element.checkbox')->with('data', $data));
+    }
+
+    public function submit($value, $name = null, $class = null, $id = null)
+    {
+        $data = [
+            'value' => $value,
+            'name' => $name,
+            'class' => $class,
+            'id' => $id
+        ];
+
+        array_push($this->data, view('sledge::element.submit')->with('data', $data));
+    }
     public function closeForm()
     {
-        return view('sledge::structure.closeForm');
+        array_push($this->data, view('sledge::structure.closeForm'));
     }
+    public function render()
+    {
+        return $this->data;
+    }
+
 }
