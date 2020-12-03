@@ -1,19 +1,28 @@
+@php
+    $dKey0 = strval($data['dKey'][0]);
+    $dKey1 = strval($data['dKey'][1]);
+@endphp
 <div class="form-group">
     <label for="{{ $data['uniqueId'] }}">{{ $data['label'] }}</label>
 
     <div class="controls">
-        <select name="{{ $data['name'] }}[]" data-placeholder="{{ $data['placeholder'] }}"
-                class="select2-icons form-control input-multi-select {{ $data['class'] }}" id="{{ $data['uniqueId'] }} multiple-select2-icons" multiple
-                autocomplete="off">
+        <select
+            name="{{ $data['name'] }}[]"
+            data-placeholder="{{ $data['placeholder'] }}"
+            class="select2-icons form-control input-multi-select {{ $data['class'] }}"
+            id="{{ $data['uniqueId'] }} multiple-select2-icons"
+            autocomplete="off"
+            multiple
+        >
 
-            @if($data['action'] == null)
+            @if($data['dKey'] == null)
                 @foreach($data['value'] as $value)
-                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                    <option value="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</option>
                 @endforeach
             @else
                 @foreach($data['value'] as $value)
-                    <option value="{{ $value->id }}" {{ ( in_array($value->id, $data['action'])) ? ' selected ' : ''}}>
-                        {{ $value->name }}</option>
+                    <option value="{{ $value->$dKey0 }}" {{ ( in_array($value->$dKey0, $data['old'])) ? ' selected ' : ''}}>
+                        {{ $value->$dKey1 }}</option>
                 @endforeach
             @endif
         </select>
