@@ -18,4 +18,10 @@ class Helper
             return false;
         }
     }
+
+    public static function getModel($model)
+    {
+        $model = explode("\\", $model);
+        return end($model);
+    }
 }
