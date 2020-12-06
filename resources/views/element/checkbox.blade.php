@@ -16,6 +16,9 @@
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
                                     id="{{ $value->$dKey0 }}"
+                                    @if(strpos('required', $data['validate']) !== false)
+                                    data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
+                                    {{ $data['validate'] }}
                                 />
                                 <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
                             @else
@@ -23,7 +26,11 @@
                                     type="checkbox"
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
-                                    id="{{ $value->$dKey0 }}" {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
+                                    id="{{ $value->$dKey0 }}"
+                                    {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
+                                    @if(strpos('required', $data['validate']) !== false)
+                                    data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
+                                    {{ $data['validate'] }}
                                 />
                                 <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
                             @endif

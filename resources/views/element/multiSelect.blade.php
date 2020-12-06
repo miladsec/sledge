@@ -13,6 +13,9 @@
             id="{{ $data['uniqueId'] }} multiple-select2-icons"
             autocomplete="off"
             multiple
+            @if(strpos('required', $data['validate']) !== false)
+            data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
+            {{ $data['validate'] }}
         >
 
             @if($data['dKey'] == null)
