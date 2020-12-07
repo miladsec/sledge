@@ -12,7 +12,6 @@ class ColumnBuilder
     private $table = [];
     private $model;
     private $value;
-    private $data;
 
     public function __construct($model, $condition = null)
     {
