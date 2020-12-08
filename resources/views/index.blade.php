@@ -68,7 +68,6 @@
 @section('my_js')
     <script>
         $(document).ready(function() {
-
             $('#tablename').DataTable( {
                 Processing: true,
                 serverSide: true,

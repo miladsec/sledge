@@ -1,20 +1,38 @@
-@extends('vendor.sledge.layouts.app')
-@section('title')
-    {{ $title ?? '' }}
-@stop
-
+@extends('layouts.panel.app')
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="mt-5">
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="content-wrapper">
+            {{   $cc['navLink'] }}
+            <div class="content-body">
+                <!-- Dashboard Ecommerce Starts -->
 
-                    @foreach($ff as $f)
-                        {{ $f }}
-                    @endforeach
+                <section class="input-validation">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">{{ $title ?? '' }}</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
 
-                </div>
+                                                @foreach($cc['data'] as $f)
+                                                    {{ $f }}
+                                                @endforeach
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Dashboard Ecommerce ends -->
             </div>
         </div>
     </div>
-@stop
+@endsection

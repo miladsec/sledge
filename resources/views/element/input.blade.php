@@ -10,7 +10,7 @@
             class="form-control input-label {{ $data['class'] }}"
             id="{{ $data['uniqueId'] }}"
             autocomplete="off"
-            @if(strpos('required', $data['validate']) !== false)
+            @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
             data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
             {{ $data['validate'] }}
         />

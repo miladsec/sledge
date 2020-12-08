@@ -16,7 +16,7 @@
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
                                     id="{{ $value->$dKey0 }}"
-                                    @if(strpos('required', $data['validate']) !== false)
+                                    @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
                                     data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
                                     {{ $data['validate'] }}
                                 />
@@ -28,7 +28,7 @@
                                     class="{{ $data['class'] }}"
                                     id="{{ $value->$dKey0 }}"
                                     {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
-                                    @if(strpos('required', $data['validate']) !== false)
+                                    @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
                                     data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
                                     {{ $data['validate'] }}
                                 />
