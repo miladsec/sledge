@@ -11,14 +11,29 @@ class FormBuilder
     private $formAction;
     private $formMethod;
     private $formMethodField;
-    public function __construct($model)
+    private $navLink;
+
+    public function __construct($model, $navLink = null, $form = 'auto')
     {
         $this->model = $model;
 
         $formConfig = new FormConfig($this->model);
-        $this->formMethod = $formConfig->method();
-        $this->formMethodField = $formConfig->methodField();
-        $this->formAction = $formConfig->action();
+
+        if ($form == 'auto'){
+            $this->formMethod = $formConfig->method();
+            $this->formMethodField = $formConfig->methodField();
+            $this->formAction = $formConfig->action();
+        }else{
+            $this->formMethod = $form[0];//method
+            $this->formMethodField = method_field($form[1]);//methodField
+            $this->formAction = $form[2];//action
+        }
+
+        if ($navLink != null){
+            $navLink = new NavLinkBuilder($navLink);
+            $this->navLink = $navLink->create();
+        }
+
     }
     public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class= null, $id= null)
     {
@@ -119,7 +134,7 @@ class FormBuilder
     }
     public function render()
     {
-        return $this->data;
+        return ['data' =>$this->data, 'navLink' => $this->navLink];
     }
 
 }
