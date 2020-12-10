@@ -11,14 +11,18 @@ class ColumnBuilder
     private $navLink;
     private $model;
     private $value;
+    private $confirm;
 
-    public function __construct($model, $condition = null, $addButton = null, $navLink = null)
+    public function __construct($model, $condition = null, $addButton = null, $confirm = null,$navLink = null)
     {
         $this->model = app($model);
         $this->value = $this->model->where($condition);
 
         if ($addButton!= null)
             self::createAddButton($addButton, $model);
+
+        if ($confirm!= null)
+            self::createConfirm($confirm);
 
         if ($navLink!= null){
             $navLink = new NavLinkBuilder($navLink);
@@ -49,7 +53,7 @@ class ColumnBuilder
 
     public function render()
     {
-        return ['table' => $this->table, 'metaData' => $this->metaData, 'navLink' => $this->navLink];
+        return ['table' => $this->table, 'metaData' => $this->metaData, 'navLink' => $this->navLink, 'confirm' => $this->confirm];
     }
 
     public function getDataTable($request)
@@ -81,7 +85,9 @@ class ColumnBuilder
                     $res = '';
                     foreach ($table['meta'] as $meta) {
                         $route = route($meta[0], [$meta[1] => $dat->{$meta[2]}]);
-                        $res .= '<a class="dropdown-item" href="' . $route . '"><i class="' . $meta[4] . ' mr-1"></i>' . $meta[3] . '</a>';
+                        if (!isset($meta[5]))
+                            $meta[5] = '';
+                        $res .= '<a class="dropdown-item '. $meta[5] .'" href="' . $route . '"><i class="' . $meta[4] . ' mr-1"></i>' . $meta[3] . '</a>';
                     }
                     $lastD[$k][$key] = '<div class="dropdown">
                                 <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
@@ -130,5 +136,13 @@ class ColumnBuilder
                     'icon' => $metaData[2],
                 ];
         }
+    }
+
+    public function createConfirm($confirm)
+    {
+        $this->confirm = [
+            'selector' => $confirm[0],
+            'script' => $confirm[1]
+        ];
     }
 }
