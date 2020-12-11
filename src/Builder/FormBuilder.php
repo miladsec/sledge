@@ -6,7 +6,11 @@ use MiladZamir\Sledge\Helper\FormConfig;
 
 class FormBuilder
 {
-    private $data = [];
+    private $data = [
+        'header' => [],
+        'body' => [],
+        'footer' => []
+    ];
     private $model;
     private $formAction;
     private $formMethod;
@@ -48,7 +52,7 @@ class FormBuilder
             'class' => $class,
             'id' => $id,
         ];
-        array_push($this->data, view('sledge::structure.openForm')->with('data', $data));
+        array_push($this->data['header'], view('sledge::structure.openForm')->with('data', $data));
     }
     public function input($type, $name, $label, $validate=[], $value=null,$placeholder=null, $class=null, $id=null)
     {
@@ -63,7 +67,7 @@ class FormBuilder
             'class' => $class,
             'id' => $id,
         ];
-        array_push($this->data, view('sledge::element.input')->with('data', $data));
+        array_push($this->data['body'], view('sledge::element.input')->with('data', $data));
     }
     public function select($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
     {
@@ -80,7 +84,7 @@ class FormBuilder
             'id' => $id,
         ];
 
-        array_push($this->data, view('sledge::element.select')->with('data', $data));
+        array_push($this->data['body'], view('sledge::element.select')->with('data', $data));
     }
 
     public function multiSelect($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
@@ -97,7 +101,7 @@ class FormBuilder
             'class' => $class,
             'id' => $id,
         ];
-        array_push($this->data, view('sledge::element.multiSelect')->with('data', $data));
+        array_push($this->data['body'], view('sledge::element.multiSelect')->with('data', $data));
     }
 
     public function checkbox($name, $label, $dKey, $validate=[], $value, $old=null, $class=null, $id=null)
@@ -114,7 +118,7 @@ class FormBuilder
             'id' => $id,
         ];
 
-        array_push($this->data, view('sledge::element.checkbox')->with('data', $data));
+        array_push($this->data['body'], view('sledge::element.checkbox')->with('data', $data));
     }
 
     public function submit($value, $name = null, $class = null, $id = null)
@@ -126,11 +130,11 @@ class FormBuilder
             'id' => $id
         ];
 
-        array_push($this->data, view('sledge::element.submit')->with('data', $data));
+        array_push($this->data['footer'], view('sledge::element.submit')->with('data', $data));
     }
     public function closeForm()
     {
-        array_push($this->data, view('sledge::structure.closeForm'));
+        array_push($this->data['footer'], view('sledge::structure.closeForm'));
     }
     public function render()
     {
