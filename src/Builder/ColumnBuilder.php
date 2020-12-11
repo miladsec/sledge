@@ -8,6 +8,7 @@ class ColumnBuilder
 {
     private $table = [];
     private $metaData = [];
+    private $columnAction = [];
     private $navLink;
     private $model;
     private $value;
@@ -38,21 +39,25 @@ class ColumnBuilder
         ];
         array_push($this->table, $data);
     }
-
-    public function columnAction($name, $text, $action = false, $meta, $method = null)
+//$name, $text, $action = false, $meta, $method = null
+    public function columnAction($action, $variable, $key, $title, $icon, $class = null)
     {
         $data = [
-            'name' => $name,
-            'text' => $text,
             'action' => $action,
-            'meta' => $meta,
-            'method' => $method,
+            'variable' => $variable,
+            'key' => $key,
+            'title' => $title,
+            'icon' => $icon,
+            'class' => ($class != null) ? implode(' ', $class) : '',
         ];
-        array_push($this->table, $data);
+        array_push($this->columnAction, $data);
     }
 
     public function render()
     {
+        if ($this->columnAction != null)
+            array_push($this->table, ['columnAction' => $this->columnAction]);
+
         return ['table' => $this->table, 'metaData' => $this->metaData, 'navLink' => $this->navLink, 'confirm' => $this->confirm];
     }
 
@@ -79,6 +84,19 @@ class ColumnBuilder
         foreach ($data as $k => $dat) {
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
+
+                if (isset($table['columnAction'])) {
+                    $res = '';
+                    foreach ($table['columnAction'] as $ca){
+                        $route = route($ca['action'], [$ca['variable'] => $dat->{$ca['key']}]);
+                        $res .= '<a class="dropdown-item '. $ca['class'] .'" href="' . $route . '"><i class="' . $ca['icon'] . ' mr-1"></i>' . $ca['title'] . '</a>';
+                        $lastD[$k][$key] = '<div class="dropdown">
+                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
+                                <div class="dropdown-menu">' . $res . '</div></div>';
+                    }
+                    continue;
+                }
+
                 $str = explode('.', $table['name']);
                 $count = count($str);
                 if (isset($table['action'])) {
