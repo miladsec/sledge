@@ -16,15 +16,21 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body">
+                                        @foreach($cc['data']['header'] as $h)
+                                            {{ $h }}
+                                        @endforeach
+
                                         <div class="row">
-                                            <div class="col-md-6">
-
-                                                @foreach($cc['data'] as $f)
-                                                    {{ $f }}
-                                                @endforeach
-
-                                            </div>
+                                            @foreach($cc['data']['body'] as $k=>$b)
+                                                <div class="col-md-6">
+                                                    {{ $b }}
+                                                </div>
+                                            @endforeach
                                         </div>
+
+                                        @foreach($cc['data']['footer'] as $f)
+                                            {{ $f }}
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
