@@ -61,7 +61,7 @@ class FormBuilder
             'type' => $type,
             'name' => $name,
             'value' => $value,
-            'validate' => implode(" ", $validate),
+            'validate' => $validate,//implode(" ", $validate)
             'label' => $label,
             'placeholder' => $placeholder,
             'class' => $class,
