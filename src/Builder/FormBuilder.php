@@ -121,6 +121,23 @@ class FormBuilder
         array_push($this->data['body'], view('sledge::element.checkbox')->with('data', $data));
     }
 
+    public function textarea($type, $name, $label, $validate=[], $value=null, $row = null,$placeholder=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'type' => $type,
+            'name' => $name,
+            'value' => $value,
+            'validate' => $validate,//implode(" ", $validate)
+            'row' => $row,
+            'label' => $label,
+            'placeholder' => $placeholder,
+            'class' => $class,
+            'id' => $id,
+        ];
+        array_push($this->data['body'], view('sledge::element.textarea')->with('data', $data));
+    }
+
     public function submit($value, $name = null, $class = null, $id = null)
     {
         $data = [
