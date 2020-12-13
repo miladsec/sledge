@@ -137,6 +137,23 @@ class FormBuilder
         ];
         array_push($this->data['body'], view('sledge::element.textarea')->with('data', $data));
     }
+    public function radio($name, $label, $dKey, $validate=[], $value, $old=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'name' => $name,
+            'label' => $label,
+            'dKey' => $dKey,
+            'validate' => $validate,
+            'value' => $value,
+            'old' => $old,
+            'class' => $class,
+            'id' => $id,
+        ];
+
+        array_push($this->data['body'], view('sledge::element.radios')->with('data', $data));
+    }
+
 
     public function submit($value, $name = null, $class = null, $id = null)
     {
