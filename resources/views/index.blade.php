@@ -78,7 +78,7 @@
                 serverSide: true,
                 "ajax": {
                     "type": "GET",
-                    "url": "{{ route('category.index') }}",
+                    "url": "{{url()->current()}}"+window.location.search,
                     "dataSrc": function (json) {
                         return json.data;
                     },beforeSend: function() {
