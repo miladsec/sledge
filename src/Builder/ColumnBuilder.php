@@ -138,7 +138,7 @@ class ColumnBuilder
 
     public function createAddButton($metaData, $model)
     {
-        $model = strtolower(Helper::getModel($model));
+        $model = lcfirst(Helper::getModel($model));
         if ($metaData == 'auto') {
             if (Helper::getActionStatus(url()->current(), $model))
                 $this->metaData = [

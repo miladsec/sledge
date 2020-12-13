@@ -4,7 +4,7 @@
         <input
             type="{{ $data['type'] }}"
             name="{{ $data['name'] }}"
-            value="{{ $data['value'] }}"
+            value="{{ $data['value'] ?? old($data['name']) }}"
             placeholder="{{ $data['placeholder'] }}"
             class="form-control input-label {{ $data['class'] }}"
             id="{{ $data['uniqueId'] }}"
