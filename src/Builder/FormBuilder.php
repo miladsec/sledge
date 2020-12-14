@@ -76,7 +76,7 @@ class FormBuilder
             'name' => $name,
             'label' => $label,
             'dKey' => $dKey,
-            'validate' => implode(" ", $validate),
+            'validate' => $validate,
             'value' => $value,
             'old' => $old,
             'placeholder' => $placeholder,
@@ -94,7 +94,7 @@ class FormBuilder
             'name' => $name,
             'label' => $label,
             'dKey' => $dKey,
-            'validate' => implode(" ", $validate),
+            'validate' => $validate,
             'value' => $value,
             'old' => $old,
             'placeholder' => $placeholder,
@@ -154,6 +154,22 @@ class FormBuilder
         array_push($this->data['body'], view('sledge::element.radios')->with('data', $data));
     }
 
+    public function date($name, $label, array $bind,$validate=[], $value=null, $old=null, $placeholder=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'name' => $name,
+            'label' => $label,
+            'bind' => $bind,
+            'validate' => $validate,
+            'value' => $value,
+            'old' => $old,
+            'placeholder' => $placeholder,
+            'class' => $class,
+            'id' => $id,
+        ];
+        array_push($this->data['body'], view('sledge::element.datePicker')->with('data', $data));
+    }
 
     public function submit($value, $name = null, $class = null, $id = null)
     {
