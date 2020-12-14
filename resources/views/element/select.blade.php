@@ -9,7 +9,7 @@
         <select
             name="{{ $data['name'] }}"
             data-placeholder="{{ $data['placeholder'] }}"
-            class="select2-icons form-control input-select {{ $data['class'] }}"
+            class="select2 form-control input-select {{ $data['class'] }}"
             id="{{ $data['uniqueId'] }} select2-icons"
             autocomplete="off"
             @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
