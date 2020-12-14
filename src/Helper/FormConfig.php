@@ -12,7 +12,7 @@ class FormConfig
     public function __construct($model)
     {
         $model = explode("\\", $model);
-        $this->model = strtolower(end($model));
+        $this->model = lcfirst(end($model));
 
         $this->create = Helper::getActionStatus(url()->current(), 'create');
         $this->edit = Helper::getActionStatus(url()->current(), 'edit');
