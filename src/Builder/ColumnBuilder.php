@@ -128,6 +128,9 @@ class ColumnBuilder
         }
         $this->data = $lastD;
 
+        if ($this->data[0][0] == null)
+            $this->data = [];
+
         return response()->json([
             'data' => $this->data,
             "draw" => $request->input('draw'),
