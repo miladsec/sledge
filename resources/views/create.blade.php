@@ -47,3 +47,6 @@
         </div>
     </section>
 @endsection
+@section('my_js')
+    {!! (isset($customScript)) ? $customScript : '' !!}
+@endsection
