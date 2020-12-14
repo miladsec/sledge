@@ -13,9 +13,9 @@
             id="{{ $data['uniqueId'] }} multiple-select2-icons"
             autocomplete="off"
             multiple
-            @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
-            data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
-            {{ $data['validate'] }}
+            @foreach($data['validate'] as $key=>$validate)
+                {!!   ' '. $key .'="'. $validate .'" ' !!}
+            @endforeach
         >
 
             @if($data['dKey'] == null)
