@@ -3,6 +3,7 @@
 namespace MiladZamir\Sledge\Builder;
 
 use MiladZamir\Sledge\Helper\Helper;
+use Morilog\Jalali\Jalalian;
 
 class ColumnBuilder
 {
@@ -31,11 +32,12 @@ class ColumnBuilder
         }
     }
 
-    public function column($name, $text)
+    public function column($name, $text, $callBack = null)
     {
         $data = [
             'name' => $name,
             'text' => $text,
+            'callBack' => $callBack
         ];
         array_push($this->table, $data);
     }
@@ -98,6 +100,7 @@ class ColumnBuilder
                 }
 
                 $str = explode('.', $table['name']);
+                $strDate = strpos($table['name'], '_at');
                 $count = count($str);
                 if (isset($table['action'])) {
                     $res = '';
@@ -111,16 +114,28 @@ class ColumnBuilder
                                 <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
                                 <div class="dropdown-menu">' . $res . '</div></div>';
                     continue;
-                } elseif ($table['name'] == '#'){
+                }
+                elseif ($table['name'] == '#'){
                     $lastD[$k][$key] = $k+1;
                     continue;
                 } elseif ($count == 1) {
+                    if ($strDate == true){
+                        $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('%A, %d-%m-%y');
+                        continue;
+                    }
+                    if (isset($table['callBack'])){
+                        $lastD[$k][$key] = $table['callBack']($dat->{$str[0]});
+                        continue;
+                    }
                     $lastD[$k][$key] = $dat->{$str[0]};
                     continue;
                 } else {
                     for ($i = 0; $i < count($str); $i++) {
                         $dat = $dat->{$str[$i]};
                         $lastD[$k][$key] = $dat;
+                    }
+                    if (isset($table['callBack'])){
+                        $lastD[$k][$key] = $table['callBack']($dat);
                     }
                 }
                 $dat = $secData;
