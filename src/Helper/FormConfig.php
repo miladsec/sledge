@@ -25,7 +25,7 @@ class FormConfig
         elseif ($this->edit)
             return 'POST';
         else
-            dd('');
+            return 'GET';
     }
 
     public function methodField()
@@ -35,7 +35,7 @@ class FormConfig
         elseif ($this->edit)
             return method_field('PATCH');
         else
-            dd('');
+            return '';
     }
     public function action()
     {
@@ -48,7 +48,7 @@ class FormConfig
             return route($this->model.'.update', [$this->model => $id]);
         }
         else
-            dd('');
+            return '';
     }
 
 
