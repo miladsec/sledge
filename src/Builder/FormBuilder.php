@@ -171,6 +171,22 @@ class FormBuilder
         array_push($this->data['body'], view('sledge::element.datePicker')->with('data', $data));
     }
 
+    public function holder($selector, $label, array $bind, $value = null, $old=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'selector' => $selector,
+            'label' => $label,
+            'bind' => $bind,
+            'value' => $value,
+            'old' => $old,
+            'class' => $class,
+            'id' => $id,
+        ];
+
+        array_push($this->data['body'], view('sledge::element.holder')->with('data', $data));
+    }
+
     public function submit($value, $name = null, $class = null, $id = null)
     {
         $data = [
