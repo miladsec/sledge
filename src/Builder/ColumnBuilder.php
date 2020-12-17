@@ -18,7 +18,7 @@ class ColumnBuilder
     public function __construct($model, $condition = null, $addButton = null, $confirm = null,$navLink = null)
     {
         $this->model = app($model);
-        $this->value = $this->model->where($condition);
+        $this->value = $this->model->where($condition)->orderBy('id', 'DESC');
 
         if ($addButton!= null)
             self::createAddButton($addButton, $model);
@@ -132,8 +132,19 @@ class ColumnBuilder
                 } else {
                     for ($i = 0; $i < count($str); $i++) {
                         $dat = $dat->{$str[$i]};
+                        if ($dat == null) {
+                            $lastD[$k][$key] = '-';
+                            break;
+                        }
+                        if ($strDate == true){
+                            if (isset($dat->timestamp)){
+                                $lastD[$k][$key] = Jalalian::forge($dat->timestamp)->format('%A, %d-%m-%y');
+                                continue;
+                            }
+                        }
                         $lastD[$k][$key] = $dat;
                     }
+
                     if (isset($table['callBack'])){
                         $lastD[$k][$key] = $table['callBack']($dat);
                     }
