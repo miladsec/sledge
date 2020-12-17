@@ -1,4 +1,4 @@
-<button type="submit" value="{{ $data['value'] }}" name="{{ $data['name'] }}"
+<button type="submit" name="{{ $data['name'] }}"
         class="btn btn-primary {{ $data['class'] }}"
-        id="{{ $data['id'] }}">ثبت
+        id="{{ $data['id'] }}">{{ $data['value'] }}
 </button>
