@@ -111,7 +111,7 @@ class FormBuilder
             'name' => $name,
             'label' => $label,
             'dKey' => $dKey,
-            'validate' => implode(" ", $validate),
+            'validate' => $validate,
             'value' => $value,
             'old' => $old,
             'class' => $class,

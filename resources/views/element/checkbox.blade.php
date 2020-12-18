@@ -15,10 +15,11 @@
                                     type="checkbox"
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
+                                    value="{{ $value->$dKey0 }}"
                                     id="{{ $value->$dKey0 }}"
-                                    @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
-                                    data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
-                                    {{ $data['validate'] }}
+                                @foreach($data['validate'] as $key=>$validate)
+                                    {!!   ' '. $key .'="'. $validate .'" ' !!}
+                                    @endforeach
                                 />
                                 <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
                             @else
@@ -26,11 +27,12 @@
                                     type="checkbox"
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
+                                    value="{{ $value->$dKey0 }}"
                                     id="{{ $value->$dKey0 }}"
                                     {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
-                                    @if(!empty($data['validate']) && strpos('required', $data['validate']) !== false)
-                                    data-validation-required-message="{{ config('sledge.validation.required') }}" @endif
-                                    {{ $data['validate'] }}
+                                @foreach($data['validate'] as $key=>$validate)
+                                    {!!   ' '. $key .'="'. $validate .'" ' !!}
+                                    @endforeach
                                 />
                                 <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
                             @endif
