@@ -7,6 +7,7 @@ return[
         'serverSideProcess' => true,
         'addLinkText' => 'افزودن',
         'addLinkIcon' => 'bx bx-plus',
+        'dropdown' => false
 
     ]
 ];
