@@ -98,7 +98,7 @@ class ColumnBuilder
                                     <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
                                     <div class="dropdown-menu">' . $res . '</div></div>';
                         }else{
-                            $res .= '<a class="btn btn-sm btn-clean btn-icon'. $ca['class'] .'" href="' . $route . '" title="'. $ca['title'] .'">
+                            $res .= '<a class="btn btn-sm btn-clean btn-icon '. $ca['class'] .'" href="' . $route . '" title="'. $ca['title'] .'">
                                 <i class="' . $ca['icon'] . ' mr-1" style="color: gray"></i>' .
                             '</a>';
                             $lastD[$k][$key] = $res;
