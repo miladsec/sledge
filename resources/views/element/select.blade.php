@@ -27,10 +27,21 @@
                 @foreach($data['value'] as $value)
                     <option value="{{ $value->$dKey0 }}">
                         @php
+                            $secData = clone $value;
                             if (is_array($dKey1)){
                                 $res = '';
                                 foreach ($dKey1 as $v){
-                                    $res .= $value->$v . '-';
+                                    $str = explode('.', $v);
+                                    if (count($str)>1){
+                                        for ($i = 0; $i < count($str); $i++) {
+                                            $value = $value->{$str[$i]};
+                                        }
+                                        $res .= $value . '-';
+
+                                        $value = $secData;
+                                    }else{
+                                        $res .= $value->$v . '-';
+                                    }
                                 }
                                 echo $res;
                             }else{
@@ -47,10 +58,21 @@
                     <option value="{{ $value->$dKey0 }}"
                         {{ ($data['old'] == $value->$dKey0) ? ' selected ' : ''}}>
                         @php
+                            $secData = clone $value;
                             if (is_array($dKey1)){
                                 $res = '';
                                 foreach ($dKey1 as $v){
-                                    $res .= $value->$v . '-';
+                                    $str = explode('.', $v);
+                                    if (count($str)>1){
+                                        for ($i = 0; $i < count($str); $i++) {
+                                            $value = $value->{$str[$i]};
+                                        }
+                                        $res .= $value . '-';
+
+                                        $value = $secData;
+                                    }else{
+                                        $res .= $value->$v . '-';
+                                    }
                                 }
                                 echo $res;
                             }else{
