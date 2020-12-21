@@ -46,7 +46,17 @@
                 @foreach($data['value'] as $value)
                     <option value="{{ $value->$dKey0 }}"
                         {{ ($data['old'] == $value->$dKey0) ? ' selected ' : ''}}>
-                        {{ $value->$dKey1 }}
+                        @php
+                            if (is_array($dKey1)){
+                                $res = '';
+                                foreach ($dKey1 as $v){
+                                    $res .= $value->$v . '-';
+                                }
+                            }else{
+                                $res = $dKey1;
+                            }
+                            echo $res;
+                        @endphp
                     </option>
                 @endforeach
 
