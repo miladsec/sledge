@@ -52,10 +52,10 @@
                                 foreach ($dKey1 as $v){
                                     $res .= $value->$v . '-';
                                 }
+                                echo $res;
                             }else{
-                                $res = $dKey1;
+                                echo $value->$dKey1;
                             }
-                            echo $res;
                         @endphp
                     </option>
                 @endforeach
