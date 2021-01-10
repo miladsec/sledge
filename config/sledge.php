@@ -8,6 +8,8 @@ return[
         'addLinkText' => 'افزودن',
         'addLinkIcon' => 'bx bx-plus',
         'dropdown' => false
-
+    ],
+    'acl' => [
+        'status' => true
     ]
 ];
