@@ -24,4 +24,24 @@ class Helper
         $model = explode("\\", $model);
         return end($model);
     }
+
+    public static function hasPermission($route)
+    {
+        if(auth()->check()){
+            $user = auth()->user();
+
+            try {
+                if (empty($route) || $user->username == 'SuperAdmin' || $user->can($route)) {
+                    return true;
+                }
+            }catch (\Exception $e){
+                if(config('app.debug'))
+                    throw new \Exception($e->getMessage());
+                else
+                    abort(500);
+            }
+        }
+        return false;
+    }
+
 }

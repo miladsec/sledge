@@ -2,6 +2,7 @@
 
 namespace MiladZamir\Sledge\Builder;
 
+use Illuminate\Support\Facades\Auth;
 use MiladZamir\Sledge\Helper\Helper;
 use Morilog\Jalali\Jalalian;
 
@@ -44,15 +45,32 @@ class ColumnBuilder
 //$name, $text, $action = false, $meta, $method = null
     public function columnAction($action, $variable, $key, $title, $icon, $class = null)
     {
-        $data = [
-            'action' => $action,
-            'variable' => $variable,
-            'key' => $key,
-            'title' => $title,
-            'icon' => $icon,
-            'class' => ($class != null) ? implode(' ', $class) : '',
-        ];
-        array_push($this->columnAction, $data);
+        if (config('sledge.acl.status') == true){
+            $role = str_replace('.', '_',$action);
+
+            $status = Helper::hasPermission($role);
+            if ($status != false){
+                $data = [
+                    'action' => $action,
+                    'variable' => $variable,
+                    'key' => $key,
+                    'title' => $title,
+                    'icon' => $icon,
+                    'class' => ($class != null) ? implode(' ', $class) : '',
+                ];
+                array_push($this->columnAction, $data);
+            }
+        }else{
+            $data = [
+                'action' => $action,
+                'variable' => $variable,
+                'key' => $key,
+                'title' => $title,
+                'icon' => $icon,
+                'class' => ($class != null) ? implode(' ', $class) : '',
+            ];
+            array_push($this->columnAction, $data);
+        }
     }
 
     public function render()
