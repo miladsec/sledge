@@ -43,11 +43,11 @@ class ColumnBuilder
         array_push($this->table, $data);
     }
 //$name, $text, $action = false, $meta, $method = null
-    public function columnAction($action, $variable, $key, $title, $icon, $class = null)
+    public function columnAction($action, $variable, $key, $title, $icon, $acl = false, $class = null)
     {
-        if (config('sledge.acl.status') == true){
+        if ($acl){
             $role = str_replace('.', '_',$action);
-
+            $role = str_replace('destroy','delete',$role);
             $status = Helper::hasPermission($role);
             if ($status != false){
                 $data = [
