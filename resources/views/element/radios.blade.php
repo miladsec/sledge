@@ -17,6 +17,12 @@
                                     name="{{ $data['name'] }}"
                                     class="{{ $data['class'] }}"
                                     id="{{ $rand }}"
+                                    value="{{ $value->$dKey0 }}"
+                                @if(is_array($data['old']))
+                                    {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
+                                    @else
+                                    {{ ($value->$dKey0 == $data['old']) ? ' checked ' : ''}}
+                                    @endif
                                 @foreach($data['validate'] as $key=>$validate)
                                     {!!   ' '. $key .'="'. $validate .'" ' !!}
                                     @endforeach
@@ -28,7 +34,12 @@
                                     name="{{ $data['name'] }}"
                                     class="{{ $data['class'] }}"
                                     id="{{ $rand }}"
+                                    value="{{ $value->$dKey0 }}"
+                                @if(is_array($data['old']))
                                     {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
+                                    @else
+                                    {{ ($value->$dKey0 == $data['old']) ? ' checked ' : ''}}
+                                    @endif
                                 @foreach($data['validate'] as $key=>$validate)
                                     {!!   ' '. $key .'="'. $validate .'" ' !!}
                                     @endforeach
