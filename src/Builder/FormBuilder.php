@@ -72,13 +72,11 @@ class FormBuilder
         array_push($this->data['body'], view('sledge::element.input')->with('data', $data));
     }
 
-    public function file($type, $name, $label, $validate=[],$placeholder=null, $class=null, $id=null)
+    public function file($name, $label, $validate=[],$placeholder=null, $class=null, $id=null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
-            'type' => $type,
             'name' => $name,
-            'value' => $value,
             'validate' => $validate,//implode(" ", $validate)
             'label' => $label,
             'placeholder' => $placeholder,

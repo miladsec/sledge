@@ -2,7 +2,7 @@
     <label for="{{ $data['uniqueId'] }}">{{ $data['label'] }}</label>
     <div class="controls custom-file">
         <input
-            type="{{ $data['type'] }}"
+            type="file"
             name="{{ $data['name'] }}"
             value="{{ $data['value'] ?? old($data['name']) }}"
             class="custom-file-input {{ $data['class'] }}"
