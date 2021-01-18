@@ -27,13 +27,13 @@
                                     type="radio"
                                     name="{{ $data['name'] }}"
                                     class="{{ $data['class'] }}"
-                                    id="{{ $value->$dKey0 }}"
+                                    id="{{ $rand }}"
                                     {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
                                 @foreach($data['validate'] as $key=>$validate)
                                     {!!   ' '. $key .'="'. $validate .'" ' !!}
                                     @endforeach
                                 />
-                                <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
+                                <label for="{{ $rand }}">{{ $value->$dKey1 }}</label>
                             @endif
                         </div>
                     </fieldset>
