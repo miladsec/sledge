@@ -39,6 +39,7 @@ class FormBuilder
         }
 
     }
+
     public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class= null, $id= null)
     {
         $data = [
@@ -54,6 +55,7 @@ class FormBuilder
         ];
         array_push($this->data['header'], view('sledge::structure.openForm')->with('data', $data));
     }
+
     public function input($type, $name, $label, $validate=[], $value=null,$placeholder=null, $class=null, $id=null)
     {
         $data = [
@@ -69,6 +71,23 @@ class FormBuilder
         ];
         array_push($this->data['body'], view('sledge::element.input')->with('data', $data));
     }
+
+    public function file($type, $name, $label, $validate=[],$placeholder=null, $class=null, $id=null)
+    {
+        $data = [
+            'uniqueId' => Helper::createUniqueString(5),
+            'type' => $type,
+            'name' => $name,
+            'value' => $value,
+            'validate' => $validate,//implode(" ", $validate)
+            'label' => $label,
+            'placeholder' => $placeholder,
+            'class' => $class,
+            'id' => $id,
+        ];
+        array_push($this->data['body'], view('sledge::element.file')->with('data', $data));
+    }
+
     public function select($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
     {
         $data = [
@@ -137,6 +156,7 @@ class FormBuilder
         ];
         array_push($this->data['body'], view('sledge::element.textarea')->with('data', $data));
     }
+
     public function radio($name, $label, $dKey, $validate=[], $value, $old=null, $class=null, $id=null)
     {
         $data = [
@@ -198,10 +218,12 @@ class FormBuilder
 
         array_push($this->data['footer'], view('sledge::element.submit')->with('data', $data));
     }
+
     public function closeForm()
     {
         array_push($this->data['footer'], view('sledge::structure.closeForm'));
     }
+
     public function render()
     {
         return ['data' =>$this->data, 'navLink' => $this->navLink];
