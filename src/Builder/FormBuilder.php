@@ -205,6 +205,11 @@ class FormBuilder
         array_push($this->data['body'], view('sledge::element.holder')->with('data', $data));
     }
 
+    public function customView($src)
+    {
+        array_push($this->data['body'], view('sledge::'. $src));
+    }
+
     public function submit($value, $name = null, $class = null, $id = null)
     {
         $data = [
