@@ -146,7 +146,7 @@ class ColumnBuilder
                     continue;
                 } elseif ($count == 1) {
                     if ($strDate == true){
-                        $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('%A, %d-%m-%y');
+                        $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
                         continue;
                     }
                     if (isset($table['callBack'])){
@@ -196,18 +196,22 @@ class ColumnBuilder
         $model = lcfirst(Helper::getModel($model));
         if ($metaData == 'auto') {
             if (Helper::getActionStatus(url()->current(), $model))
-                $this->metaData = [
+                $this->metaData = array([
                     'url' => route($model . '.create'),
                     'text' => config('sledge.index.addLinkText'),
                     'icon' => config('sledge.index.addLinkIcon'),
-                ];
+                ]);
         } else {
-            if (Helper::getActionStatus(url()->current(), $model))
-                $this->metaData = [
-                    'url' => $metaData[0],
-                    'text' => $metaData[1],
-                    'icon' => $metaData[2],
-                ];
+            if (Helper::getActionStatus(url()->current(), $model)) {
+                foreach ($metaData as $key=>$meta){
+                    $this->metaData[$key] = [
+                        'url' => $meta[0],
+                        'text' => $meta[1],
+                        'icon' => $meta[2],
+                    ];
+                }
+            }
+
         }
     }
 

@@ -14,10 +14,12 @@
                     <div class="card-content">
                         <div class="card-body card-dashboard">
                             @if(!empty($cc['metaData']))
-                                <a href="{{ $cc['metaData']['url'] }}" class="btn btn-primary mr-1 mb-1">
-                                    <i class="{{ $cc['metaData']['icon'] }}"></i>
-                                    <span class="align-middle ml-25">{{ $cc['metaData']['text'] }}</span>
-                                </a>
+                                @foreach($cc['metaData'] as $meta)
+                                    <a href="{{ $meta['url'] }}" class="btn btn-primary mr-1 mb-1">
+                                        <i class="{{ $meta['icon'] }}"></i>
+                                        <span class="align-middle ml-25">{{ $meta['text'] }}</span>
+                                    </a>
+                                @endforeach
                             @endif
 
                             <div class="table-responsive">
