@@ -195,7 +195,7 @@ class ColumnBuilder
     {
         $model = lcfirst(Helper::getModel($model));
         if ($metaData == 'auto') {
-            if (Helper::getActionStatus(url()->current(), $model))
+//            if (Helper::getActionStatus(url()->current(), $model))
                 $this->metaData = array([
                     'url' => route($model . '.create'),
                     'text' => config('sledge.index.addLinkText'),
