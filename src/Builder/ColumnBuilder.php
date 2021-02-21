@@ -202,7 +202,7 @@ class ColumnBuilder
                     'icon' => config('sledge.index.addLinkIcon'),
                 ]);
         } else {
-            if (Helper::getActionStatus(url()->current(), $model)) {
+//            if (Helper::getActionStatus(url()->current(), $model)) {
                 foreach ($metaData as $key=>$meta){
                     $this->metaData[$key] = [
                         'url' => $meta[0],
@@ -210,7 +210,7 @@ class ColumnBuilder
                         'icon' => $meta[2],
                     ];
                 }
-            }
+//            }
 
         }
     }
