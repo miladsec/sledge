@@ -19,7 +19,11 @@ class ColumnBuilder
     public function __construct($model, $condition = null, $addButton = null, $confirm = null,$navLink = null)
     {
         $this->model = app($model);
-        $this->value = $this->model->where($condition)->orderBy('id', 'DESC');
+        if (array_key_exists('whereIn',$condition)){
+            $this->value = $this->model->whereIn(key($condition['data']), $condition['data'][key($condition['data'])])->orderBy('id', 'DESC');
+        }else{
+            $this->value = $this->model->where($condition)->orderBy('id', 'DESC');
+        }
 
         if ($addButton!= null)
             self::createAddButton($addButton, $model);
