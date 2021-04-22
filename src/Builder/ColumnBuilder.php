@@ -3,40 +3,59 @@
 namespace MiladZamir\Sledge\Builder;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use MiladZamir\Sledge\Helper\Helper;
 use Morilog\Jalali\Jalalian;
 
 class ColumnBuilder
 {
-    private $table = [];
     private $metaData = [];
-    private $columnAction = [];
     private $navLink;
-    private $model;
-    private $value;
     private $confirm;
 
-    public function __construct($model, $condition = null, $addButton = null, $confirm = null,$navLink = null)
+
+    private $model;
+    private $route;
+    private $value;
+    private $table = [];
+    private $columnAction = [];
+    private $searchAttributes = [];
+
+    //$condition = null, $addButton = null, $confirm = null,$navLink = null
+    public function __construct($model, $route)
     {
         $this->model = app($model);
-//        if (array_key_exists('whereIn',$condition)){
-//            $this->value = $this->model->whereIn(key($condition['data']), $condition['data'][key($condition['data'])])->orderBy('id', 'DESC');
-//        }else{
-//            $this->value = $this->model->where($condition)->orderBy('id', 'DESC');
+        $this->route = $route;
+
+//        if ($addButton!= null)
+//            self::createAddButton($addButton, $model);
+//
+//        if ($confirm!= null)
+//            self::createConfirm($confirm);
+//
+//        if ($navLink!= null){
+//            $navLink = new NavLinkBuilder($navLink);
+//            $this->navLink = $navLink->create();
 //        }
+    }
 
-        $this->value = $this->model->where($condition)->orderBy('id', 'DESC');
+    public function queryConfig($orderBy = null,$where = null, $whereIn = null)
+    {
+        $this->value = $this->model;
 
-        if ($addButton!= null)
-            self::createAddButton($addButton, $model);
+        if ($orderBy != null)
+            $this->value = $this->model->orderByRaw($orderBy);
 
-        if ($confirm!= null)
-            self::createConfirm($confirm);
+        if ($where != null)
+            $this->value = $this->model->where($where);
 
-        if ($navLink!= null){
-            $navLink = new NavLinkBuilder($navLink);
-            $this->navLink = $navLink->create();
-        }
+        if ($whereIn != null)
+            $this->value = $this->model->whereIn($whereIn[0], $whereIn[1]);
+    }
+
+    public function dataTableConfig($searchAttributes = [])
+    {
+        $this->searchAttributes = $searchAttributes;
     }
 
     public function column($name, $text, $callBack = null)
@@ -48,43 +67,17 @@ class ColumnBuilder
         ];
         array_push($this->table, $data);
     }
-//$name, $text, $action = false, $meta, $method = null
-    public function columnAction($action, $variable, $key, $title, $icon, $acl = false, $class = null)
-    {
-        if ($acl){
-            $role = str_replace('.', '_',$action);
-            $role = str_replace('destroy','delete',$role);
-            $status = Helper::hasPermission($role);
-            if ($status != false){
-                $data = [
-                    'action' => $action,
-                    'variable' => $variable,
-                    'key' => $key,
-                    'title' => $title,
-                    'icon' => $icon,
-                    'class' => ($class != null) ? implode(' ', $class) : '',
-                ];
-                array_push($this->columnAction, $data);
-            }
-        }else{
-            $data = [
-                'action' => $action,
-                'variable' => $variable,
-                'key' => $key,
-                'title' => $title,
-                'icon' => $icon,
-                'class' => ($class != null) ? implode(' ', $class) : '',
-            ];
-            array_push($this->columnAction, $data);
-        }
-    }
 
-    public function render()
+    public function columnAction($routeName, $variables = [], $title, $icon, $acl = false, $class = null)
     {
-        if ($this->columnAction != null)
-            array_push($this->table, ['columnAction' => $this->columnAction]);
-
-        return ['table' => $this->table, 'metaData' => $this->metaData, 'navLink' => $this->navLink, 'confirm' => $this->confirm];
+        $data = [
+            'routeName' => $routeName,
+            'variables' => $variables,
+            'title' => $title,
+            'icon' => $icon,
+            'class' => ($class != null) ? implode(' ', $class) : '',
+        ];
+        array_push($this->columnAction, $data);
     }
 
     public function getDataTable($request)
@@ -95,7 +88,20 @@ class ColumnBuilder
 
         $length = (int)$request->input('length');
 
-        $data = $this->value->skip($start)->take($length)->get();
+        if ($request->search['value'] != null) {
+            $data = $this->value;
+            foreach ($this->searchAttributes as $key => $sv) {
+                if ($key == 0) {
+                    $data->where($sv, 'LIKE', "%" . $request->search['value'] . "%");
+                } else {
+                    $data->orWhere($sv, 'LIKE', "%" . $request->search['value'] . "%");
+                }
+            }
+            $mmxF = $data->count();
+            $data = $data->skip($start)->take($length)->get();
+        } else {
+            $data = $this->value->skip($start)->take($length)->get();
+        }
 
         $page = ($start / $length) + 1;
         if (empty($page))
@@ -110,77 +116,53 @@ class ColumnBuilder
         foreach ($data as $k => $dat) {
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
-
                 if (isset($table['columnAction'])) {
-                    $res = '';
                     foreach ($table['columnAction'] as $ca){
-                        $route = route($ca['action'], [$ca['variable'] => $dat->{$ca['key']}]);
-
-                        if (config('sledge.index.dropdown')){
-                            $res .= '<a class="dropdown-item '. $ca['class'] .'" href="' . $route . '"><i class="' . $ca['icon'] . ' mr-1"></i>' . $ca['title'] . '</a>';
-                            $lastD[$k][$key] = '<div class="dropdown">
-                                    <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                    <div class="dropdown-menu">' . $res . '</div></div>';
-                        }else{
-                            $res .= '<a class="btn btn-sm btn-clean btn-icon '. $ca['class'] .'" href="' . $route . '" title="'. $ca['title'] .'">
-                                <i class="' . $ca['icon'] . ' mr-1" style="color: gray"></i>' .
-                            '</a>';
-                            $lastD[$k][$key] = $res;
+                        $routeVariables = [];
+                        foreach ($ca['variables'] as $variable) {
+                            foreach ($variable as $var=>$v){
+                                $routeVariables += [$var => $dat->{$v}];
+                            }
                         }
+                        $route = route($ca['routeName'], $routeVariables);
+                        $routeString = config('sledge.columnAction.route');
+                        $routeString = str_replace('*1',$ca['class'], $routeString);
+                        $routeString = str_replace('*2',$route, $routeString);
+                        $routeString = str_replace('*3',$ca['icon'], $routeString);
+                        $routeString = str_replace('*4',$ca['title'], $routeString);
+                        $lastD[$k][$key] = str_replace('*1',$routeString, config('sledge.columnAction.static'));
                     }
                     continue;
                 }
 
                 $str = explode('.', $table['name']);
-                $strDate = strpos($table['name'], '_at');
                 $count = count($str);
-                if (isset($table['action'])) {
-                    $res = '';
-                    foreach ($table['meta'] as $meta) {
-                        $route = route($meta[0], [$meta[1] => $dat->{$meta[2]}]);
-                        if (!isset($meta[5]))
-                            $meta[5] = '';
-                        $res .= '<a class="dropdown-item '. $meta[5] .'" href="' . $route . '"><i class="' . $meta[4] . ' mr-1"></i>' . $meta[3] . '</a>';
-                    }
-                    $lastD[$k][$key] = '<div class="dropdown">
-                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                <div class="dropdown-menu">' . $res . '</div></div>';
-                    continue;
-                }
-                elseif ($table['name'] == '#'){
+                if ($table['name'] == '#'){
                     $lastD[$k][$key] = $k+1;
                     continue;
-                } elseif ($count == 1) {
-                    if ($strDate == true){
-                        $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
-                        continue;
-                    }
+                }
+                if ($count == 1) {
                     if (isset($table['callBack'])){
                         $lastD[$k][$key] = $table['callBack']($dat->{$str[0]});
                         continue;
                     }
                     $lastD[$k][$key] = $dat->{$str[0]};
                     continue;
-                } else {
+                }
+                if ($count > 1) {
                     for ($i = 0; $i < count($str); $i++) {
                         $dat = $dat->{$str[$i]};
                         if ($dat == null) {
                             $lastD[$k][$key] = '-';
                             break;
                         }
-                        if ($strDate == true){
-                            if (isset($dat->timestamp)){
-                                $lastD[$k][$key] = Jalalian::forge($dat->timestamp)->format('%A, %d-%m-%y');
-                                continue;
-                            }
-                        }
                         $lastD[$k][$key] = $dat;
                     }
-
                     if (isset($table['callBack'])){
                         $lastD[$k][$key] = $table['callBack']($dat);
                     }
                 }
+
                 $dat = $secData;
             }
         }
@@ -193,8 +175,16 @@ class ColumnBuilder
             'data' => $this->data,
             "draw" => $request->input('draw'),
             "recordsTotal" => $mmx,
-            "recordsFiltered" => $mmx,
+            "recordsFiltered" => $mmxF ?? $mmx,
         ]);
+    }
+
+    public function render()
+    {
+        if ($this->columnAction != null)
+            array_push($this->table, ['columnAction' => $this->columnAction]);
+
+        return ['table' => $this->table, 'metaData' => $this->metaData, 'navLink' => $this->navLink, 'confirm' => $this->confirm];
     }
 
     public function createAddButton($metaData, $model)
