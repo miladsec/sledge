@@ -2,7 +2,6 @@
 
 namespace MiladZamir\Sledge\Builder;
 
-use App\Models\Blog;
 use MiladZamir\Sledge\Helper\FormConfig;
 use MiladZamir\Sledge\Helper\Helper;
 
@@ -18,11 +17,9 @@ class Builder
     private $button = [];
     private $navbar;
     private $module;
-
     private $formAction;
     private $formMethod;
     private $formMethodField;
-
     public $data = [
         'header' => [],
         'body' => [],
