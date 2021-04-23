@@ -44,4 +44,12 @@ class Helper
         return false;
     }
 
+    public static function navbarConfig($currentRoute)
+    {
+        foreach (config('sledge.route.namePrefix') as $name=>$route){
+            if (str_contains($currentRoute, $name)){
+                return [$name, $route];
+            }
+        }
+    }
 }

@@ -2,44 +2,31 @@
 
 namespace MiladZamir\Sledge\Builder;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+use App\Models\Blog;
 use MiladZamir\Sledge\Helper\Helper;
-use Morilog\Jalali\Jalalian;
 
-class ColumnBuilder
+class Builder
 {
-    private $metaData = [];
-    private $navLink;
-    private $confirm;
-
-
     private $model;
+    private $modelName;
     private $route;
     private $value;
     private $table = [];
     private $columnAction = [];
     private $searchAttributes = [];
+    private $button = [];
+    private $navbar;
+    private $module;
 
     //$condition = null, $addButton = null, $confirm = null,$navLink = null
     public function __construct($model, $route)
     {
         $this->model = app($model);
+        $this->modelName = $model;
         $this->route = $route;
-
-//        if ($addButton!= null)
-//            self::createAddButton($addButton, $model);
-//
-//        if ($confirm!= null)
-//            self::createConfirm($confirm);
-//
-//        if ($navLink!= null){
-//            $navLink = new NavLinkBuilder($navLink);
-//            $this->navLink = $navLink->create();
-//        }
     }
 
-    public function queryConfig($orderBy = null,$where = null, $whereIn = null)
+    public function queryConfig($orderBy = "id DESC", $where = null, $whereIn = null)
     {
         $this->value = $this->model;
 
@@ -56,6 +43,14 @@ class ColumnBuilder
     public function dataTableConfig($searchAttributes = [])
     {
         $this->searchAttributes = $searchAttributes;
+    }
+
+    public function pageConfig($module, $button = 'auto', $navbar = 'auto')
+    {
+        $this->module = $module;
+
+        $this->createButton($button);
+        $this->createNavbar($navbar);
     }
 
     public function column($name, $text, $callBack = null)
@@ -117,32 +112,32 @@ class ColumnBuilder
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
                 if (isset($table['columnAction'])) {
-                    foreach ($table['columnAction'] as $ca){
+                    foreach ($table['columnAction'] as $ca) {
                         $routeVariables = [];
                         foreach ($ca['variables'] as $variable) {
-                            foreach ($variable as $var=>$v){
+                            foreach ($variable as $var => $v) {
                                 $routeVariables += [$var => $dat->{$v}];
                             }
                         }
                         $route = route($ca['routeName'], $routeVariables);
                         $routeString = config('sledge.columnAction.route');
-                        $routeString = str_replace('*1',$ca['class'], $routeString);
-                        $routeString = str_replace('*2',$route, $routeString);
-                        $routeString = str_replace('*3',$ca['icon'], $routeString);
-                        $routeString = str_replace('*4',$ca['title'], $routeString);
-                        $lastD[$k][$key] = str_replace('*1',$routeString, config('sledge.columnAction.static'));
+                        $routeString = str_replace('*1', $ca['class'], $routeString);
+                        $routeString = str_replace('*2', $route, $routeString);
+                        $routeString = str_replace('*3', $ca['icon'], $routeString);
+                        $routeString = str_replace('*4', $ca['title'], $routeString);
+                        $lastD[$k][$key] = str_replace('*1', $routeString, config('sledge.columnAction.static'));
                     }
                     continue;
                 }
 
                 $str = explode('.', $table['name']);
                 $count = count($str);
-                if ($table['name'] == '#'){
-                    $lastD[$k][$key] = $k+1;
+                if ($table['name'] == '#') {
+                    $lastD[$k][$key] = $k + 1;
                     continue;
                 }
                 if ($count == 1) {
-                    if (isset($table['callBack'])){
+                    if (isset($table['callBack'])) {
                         $lastD[$k][$key] = $table['callBack']($dat->{$str[0]});
                         continue;
                     }
@@ -158,7 +153,7 @@ class ColumnBuilder
                         }
                         $lastD[$k][$key] = $dat;
                     }
-                    if (isset($table['callBack'])){
+                    if (isset($table['callBack'])) {
                         $lastD[$k][$key] = $table['callBack']($dat);
                     }
                 }
@@ -184,38 +179,52 @@ class ColumnBuilder
         if ($this->columnAction != null)
             array_push($this->table, ['columnAction' => $this->columnAction]);
 
-        return ['table' => $this->table, 'metaData' => $this->metaData, 'navLink' => $this->navLink, 'confirm' => $this->confirm];
+        return ['table' => $this->table, 'button' => $this->button, 'navbar' => $this->navbar];
     }
 
-    public function createAddButton($metaData, $model)
+    public function createButton($button)
     {
-        $model = lcfirst(Helper::getModel($model));
-        if ($metaData == 'auto') {
-//            if (Helper::getActionStatus(url()->current(), $model))
-                $this->metaData = array([
-                    'url' => route($model . '.create'),
-                    'text' => config('sledge.index.addLinkText'),
-                    'icon' => config('sledge.index.addLinkIcon'),
-                ]);
-        } else {
-//            if (Helper::getActionStatus(url()->current(), $model)) {
-                foreach ($metaData as $key=>$meta){
-                    $this->metaData[$key] = [
-                        'url' => $meta[0],
-                        'text' => $meta[1],
-                        'icon' => $meta[2],
-                    ];
-                }
-//            }
+        $model = lcfirst(Helper::getModel($this->modelName));
 
+        if (!is_array($button) && $button == 'auto') {
+            $this->button = array([
+                'url' => route($model . '.create'),
+                'text' => config('sledge.index.addLinkText'),
+                'icon' => config('sledge.index.addLinkIcon'),
+            ]);
+            return 0;
+        }
+
+        foreach ($button as $key => $btn) {
+            $this->button[$key] = [
+                'url' => $btn[0],
+                'text' => $btn[1],
+                'icon' => $btn[2],
+            ];
         }
     }
 
-    public function createConfirm($confirm)
+    public function createNavbar($navbar)
     {
-        $this->confirm = [
-            'selector' => $confirm[0],
-            'script' => $confirm[1]
-        ];
+        if (!is_array($navbar) && $navbar == 'auto') {
+            $navbarConfig = Helper::navbarConfig(request()->route()->getName());
+            switch ($navbarConfig[0]) {
+                case 'index':
+                    $this->navbar = [
+                        '<i class="bx bx-home-alt"></i>' => config('sledge.route.defaultRoute'),
+                        $this->module => 'blog.index',
+                        $navbarConfig[1] => request()->route()->getName()
+                        ];
+                    break;
+                case 'create':
+                    break;
+                case 'edit':
+                    break;
+                default:
+
+            }
+        }
+
     }
+
 }
