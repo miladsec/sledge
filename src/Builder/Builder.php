@@ -112,6 +112,7 @@ class Builder
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
                 if (isset($table['columnAction'])) {
+                    $routeStrings = '';
                     foreach ($table['columnAction'] as $ca) {
                         $routeVariables = [];
                         foreach ($ca['variables'] as $variable) {
@@ -125,8 +126,9 @@ class Builder
                         $routeString = str_replace('*2', $route, $routeString);
                         $routeString = str_replace('*3', $ca['icon'], $routeString);
                         $routeString = str_replace('*4', $ca['title'], $routeString);
-                        $lastD[$k][$key] = str_replace('*1', $routeString, config('sledge.columnAction.static'));
+                        $routeStrings .= $routeString;
                     }
+                    $lastD[$k][$key] = str_replace('*1', $routeStrings, config('sledge.columnAction.static'));
                     continue;
                 }
 
