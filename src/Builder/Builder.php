@@ -40,66 +40,9 @@ class Builder
         $this->config = new Config($config, $this->model, $this->modelName);
         return $this->config;
     }
-
-
-
-
-    /*public function column($name, $text, $callBack = null)
-    {
-        $data = [
-            'name' => $name,
-            'text' => $text,
-            'callBack' => $callBack
-        ];
-        array_push($this->table, $data);
-    }*/
-
-    /*public function columnAction($routeName, $variables = [], $title, $icon, $acl = false, $class = null)
-    {
-        $data = [
-            'routeName' => $routeName,
-            'variables' => $variables,
-            'title' => $title,
-            'icon' => $icon,
-            'class' => ($class != null) ? implode(' ', $class) : '',
-        ];
-        array_push($this->columnAction, $data);
-    }*/
-
     public function getDataTable($request)
     {
-        /*$mmx = $this->value->count();
-
-        $start = (int)$request->input('start');
-
-        $length = (int)$request->input('length');
-
-        if ($request->search['value'] != null) {
-            $data = $this->value;
-            foreach ($this->searchAttributes as $key => $sv) {
-                if ($key == 0) {
-                    $data->where($sv, 'LIKE', "%" . $request->search['value'] . "%");
-                } else {
-                    $data->orWhere($sv, 'LIKE', "%" . $request->search['value'] . "%");
-                }
-            }
-            $mmxF = $data->count();
-            $data = $data->skip($start)->take($length)->get();
-        } else {
-            $data = $this->value->skip($start)->take($length)->get();
-        }
-
-        $page = ($start / $length) + 1;
-        if (empty($page))
-            $page = 1;
-
-        if ($page < 0)
-            $page = 1;
-
-        $request->request->add(['page' => $page]);*/
-
-
-        $mmx = $this->value->count();
+        $mmx = $this->config->value->count();
         $start = (int)$request->input('start');
         $length = (int)$request->input('length');
 
@@ -132,36 +75,35 @@ class Builder
         foreach ($data as $k => $dat) {
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
-                if (isset($table['columnAction'])) {
+                if (is_array($table->variables) && !empty($table->variables)) {
                     $routeStrings = '';
-                    foreach ($table['columnAction'] as $ca) {
-                        $routeVariables = [];
-                        foreach ($ca['variables'] as $variable) {
-                            foreach ($variable as $var => $v) {
-                                $routeVariables += [$var => $dat->{$v}];
-                            }
+                    $routeVariables = [];
+                    foreach ($table->variables as $variable) {
+                        foreach ($variable as $var => $dValue){
+                            $routeVariables += [$var => $dat->{$dValue}];
                         }
-                        $route = route($ca['routeName'], $routeVariables);
-                        $routeString = config('sledge.columnAction.route');
-                        $routeString = str_replace('*1', $ca['class'], $routeString);
-                        $routeString = str_replace('*2', $route, $routeString);
-                        $routeString = str_replace('*3', $ca['icon'], $routeString);
-                        $routeString = str_replace('*4', $ca['title'], $routeString);
-                        $routeStrings .= $routeString;
                     }
+                    $route = route($table->name, $routeVariables);
+                    $routeString = config('sledge.columnAction.route');
+                    $routeString = str_replace('*1', $table->cssClass, $routeString);
+                    $routeString = str_replace('*2', $route, $routeString);
+                    $routeString = str_replace('*3', $table->icon, $routeString);
+                    $routeString = str_replace('*4', $table->title, $routeString);
+                    $routeStrings .= $routeString;
+
                     $lastD[$k][$key] = str_replace('*1', $routeStrings, config('sledge.columnAction.static'));
                     continue;
                 }
 
-                $str = explode('.', $table['name']);
+                $str = explode('.', $table->name);
                 $count = count($str);
-                if ($table['name'] == '#') {
+                if ($table->name == '#') {
                     $lastD[$k][$key] = $k + 1;
                     continue;
                 }
                 if ($count == 1) {
-                    if (isset($table['callBack'])) {
-                        $lastD[$k][$key] = $table['callBack']($dat->{$str[0]});
+                    if (!empty($table->callBack)) {
+                        $lastD[$k][$key] = $table->callBack($dat->{$str[0]})->callBack;
                         continue;
                     }
                     $lastD[$k][$key] = $dat->{$str[0]};
@@ -176,8 +118,8 @@ class Builder
                         }
                         $lastD[$k][$key] = $dat;
                     }
-                    if (isset($table['callBack'])) {
-                        $lastD[$k][$key] = $table['callBack']($dat);
+                    if (!empty($table->callBack)) {
+                        $lastD[$k][$key] = $table->callBack($dat)->callBack;
                     }
                 }
 
@@ -227,63 +169,7 @@ class Builder
 
 //            $a->request->add(['page' => $page]);
 
-            $lastD[][] = null;
-            foreach ($data as $k => $dat) {
-                $secData = clone $dat;
-                foreach ($this->table as $key => $table) {
-                    if (is_array($table->variables) && !empty($table->variables)) {
-                        $routeStrings = '';
-                        foreach ($table->variables as $ca) {
-                            $routeVariables = [];
-                            foreach ($ca['variables'] as $variable) {
-                                foreach ($variable as $var => $v) {
-                                    $routeVariables += [$var => $dat->{$v}];
-                                }
-                            }
-                            $route = route($ca['routeName'], $routeVariables);
-                            $routeString = config('sledge.columnAction.route');
-                            $routeString = str_replace('*1', $ca['class'], $routeString);
-                            $routeString = str_replace('*2', $route, $routeString);
-                            $routeString = str_replace('*3', $ca['icon'], $routeString);
-                            $routeString = str_replace('*4', $ca['title'], $routeString);
-                            $routeStrings .= $routeString;
-                        }
-                        $lastD[$k][$key] = str_replace('*1', $routeStrings, config('sledge.columnAction.static'));
-                        continue;
-                    }
 
-                    $str = explode('.', $table->name);
-                    $count = count($str);
-                    if ($table['name'] == '#') {
-                        $lastD[$k][$key] = $k + 1;
-                        continue;
-                    }
-                    if ($count == 1) {
-                        if (isset($table['callBack'])) {
-                            $lastD[$k][$key] = $table['callBack']($dat->{$str[0]});
-                            continue;
-                        }
-                        $lastD[$k][$key] = $dat->{$str[0]};
-                        continue;
-                    }
-                    if ($count > 1) {
-                        for ($i = 0; $i < count($str); $i++) {
-                            $dat = $dat->{$str[$i]};
-                            if ($dat == null) {
-                                $lastD[$k][$key] = '-';
-                                break;
-                            }
-                            $lastD[$k][$key] = $dat;
-                        }
-                        if (isset($table['callBack'])) {
-                            $lastD[$k][$key] = $table['callBack']($dat);
-                        }
-                    }
-
-                    $dat = $secData;
-                }
-            }
-            $this->data = $lastD;
 
             return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar];
          /*   if ($this->columnAction != null)
