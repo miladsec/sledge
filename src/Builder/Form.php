@@ -55,6 +55,8 @@ class Form
         switch ($this->type){
             case 'text':
             case 'number':
+            case 'tel':
+            case 'email':
                 $this->bodyData = view('sledge::element.input')->with('data', $this);
                 break;
             case 'submit':
