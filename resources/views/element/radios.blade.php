@@ -7,48 +7,38 @@
     <div class="controls">
         <ul class="list-unstyled mb-0">
             @foreach($data['value'] as $value)
-                @php $rand = time().rand(0,100) @endphp
-                <li class="d-inline-block mr-2 mb-1">
-                    <fieldset>
-                        <div class="radio">
-                            @if($data['old'] == null)
-                                <input
-                                    type="radio"
-                                    name="{{ $data['name'] }}"
-                                    class="{{ $data['class'] }}"
-                                    id="{{ $rand }}"
-                                    value="{{ $value->$dKey0 }}"
-                                @if(is_array($data['old']))
-                                    {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
-                                    @else
-                                    {{ ($value->$dKey0 == $data['old']) ? ' checked ' : ''}}
-                                    @endif
+            <li class="d-inline-block mr-2 mb-1">
+                <fieldset>
+                    <div class="radio">
+                        @if($data['old'] == null)
+                        <input
+                            type="radio"
+                            name="{{ $data['name'] }}"
+                            class="{{ $data['class'] }}"
+                            id="{{ $value->$dKey0 }}"
+                            value="{{ $value->$dKey0 }}"
+                            @foreach($data['validate'] as $key=>$validate)
+                                {!!   ' '. $key .'="'. $validate .'" ' !!}
+                            @endforeach
+                        />
+                        <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
+                        @else
+                            <input
+                                type="radio"
+                                name="{{ $data['name'] }}"
+                                class="{{ $data['class'] }}"
+                                id="{{ $value->$dKey0 }}"
+                                value="{{ $value->$dKey0 }}"
+                                {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
                                 @foreach($data['validate'] as $key=>$validate)
-                                    {!!   ' '. $key .'="'. $validate .'" ' !!}
-                                    @endforeach
-                                />
-                                <label for="{{ $rand }}">{{ $value->$dKey1 }}</label>
-                            @else
-                                <input
-                                    type="radio"
-                                    name="{{ $data['name'] }}"
-                                    class="{{ $data['class'] }}"
-                                    id="{{ $rand }}"
-                                    value="{{ $value->$dKey0 }}"
-                                @if(is_array($data['old']))
-                                    {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
-                                    @else
-                                    {{ ($value->$dKey0 == $data['old']) ? ' checked ' : ''}}
-                                    @endif
-                                @foreach($data['validate'] as $key=>$validate)
-                                    {!!   ' '. $key .'="'. $validate .'" ' !!}
-                                    @endforeach
-                                />
-                                <label for="{{ $rand }}">{{ $value->$dKey1 }}</label>
-                            @endif
-                        </div>
-                    </fieldset>
-                </li>
+                                {!!   ' '. $key .'="'. $validate .'" ' !!}
+                                @endforeach
+                            />
+                            <label for="{{ $value->$dKey0 }}">{{ $value->$dKey1 }}</label>
+                        @endif
+                    </div>
+                </fieldset>
+            </li>
             @endforeach
         </ul>
     </div>

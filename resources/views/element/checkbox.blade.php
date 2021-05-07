@@ -15,8 +15,8 @@
                                     type="checkbox"
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
-                                    id="{{ $value->$dKey0 }}"
                                     value="{{ $value->$dKey0 }}"
+                                    id="{{ $value->$dKey0 }}"
                                 @foreach($data['validate'] as $key=>$validate)
                                     {!!   ' '. $key .'="'. $validate .'" ' !!}
                                     @endforeach
@@ -27,8 +27,8 @@
                                     type="checkbox"
                                     name="{{ $data['name'] }}[]"
                                     class="{{ $data['class'] }}"
-                                    id="{{ $value->$dKey0 }}"
                                     value="{{ $value->$dKey0 }}"
+                                    id="{{ $value->$dKey0 }}"
                                     {{ ( in_array($value->$dKey0, $data['old'])) ? ' checked ' : ''}}
                                 @foreach($data['validate'] as $key=>$validate)
                                     {!!   ' '. $key .'="'. $validate .'" ' !!}
