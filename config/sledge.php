@@ -7,7 +7,11 @@ return [
         'serverSideProcess' => true,
         'addLinkText' => 'افزودن',
         'addLinkIcon' => 'bx bx-plus',
-        'dropdown' => false
+        'dropdown' => false,
+        'actionColumnName' => 'عملیاتx'
+    ],
+    'create' => [
+      'defaultCol' => 'col-md-6'
     ],
     'acl' => [
         'status' => true
