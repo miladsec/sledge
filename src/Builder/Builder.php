@@ -10,12 +10,8 @@ class Builder
 {
     private $model;
     private $modelName;
-    private $route;
-    private $value;
     private $table = [];
-    private $module;
     private $config;
-    private $script;
     public $data = [
         'header' => [],
         'body' => [],
@@ -35,13 +31,13 @@ class Builder
         return end($this->table);
     }
 
-    public function config($config)
+    public function config($config): Config
     {
         $this->config = new Config($config, $this->model, $this->modelName);
         return $this->config;
     }
 
-    public function getDataTable($request)
+    public function getDataTable($request): \Illuminate\Http\JsonResponse
     {
         $mmx = $this->config->value->count();
         $start = (int)$request->input('start');
@@ -140,7 +136,7 @@ class Builder
         ]);
     }
 
-    public function render()
+    public function render(): array
     {
         return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar];
     }
