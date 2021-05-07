@@ -25,6 +25,8 @@ class Form
     public $value;
     public $placeholder;
     public $uniqueId;
+    public $selectConfig;
+    public $oldValue;
 
 
     public function __construct($config)
@@ -55,6 +57,9 @@ class Form
                 break;
             case 'submit':
                 $this->footerData = view('sledge::element.submit')->with('data', $this);
+                break;
+            case 'select':
+                $this->bodyData = view('sledge::element.select')->with('data', $this);
                 break;
             default:
                 dd('!');
@@ -131,6 +136,18 @@ class Form
     public function acceptCharset($acceptCharset = 'utf-8'): Form
     {
         $this->acceptCharset = $acceptCharset;
+        return $this;
+    }
+
+    public function selectConfig($selectConfig): Form
+    {
+        $this->selectConfig = $selectConfig;
+        return $this;
+    }
+
+    public function oldValue($oldValue): Form
+    {
+        $this->oldValue = $oldValue;
         return $this;
     }
 
