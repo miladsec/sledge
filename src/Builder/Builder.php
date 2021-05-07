@@ -12,17 +12,17 @@ class Builder
     private $modelName;
     private $table = [];
     private $config;
-    public $data = [
+    public $form;
+    public $formData = [
         'header' => [],
         'body' => [],
         'footer' => []
     ];
 
-    public function __construct($model, $route)
+    public function __construct($model)
     {
         $this->model = app($model);
         $this->modelName = $model;
-        $this->route = $route;
     }
 
     public function column($name)
@@ -138,7 +138,25 @@ class Builder
 
     public function render(): array
     {
-        return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar];
+        if (!empty($this->form)){
+            foreach ($this->form as $form){
+                if (!empty($form->headerData)){
+                    array_push($this->formData['header'], $form->headerData);
+                }elseif (!empty(!empty($form->bodyData))){
+                    array_push($this->formData['body'], $form->bodyData);
+                }elseif (!empty($form->footerData)){
+                    array_push($this->formData['footer'], $form->footerData);
+                }
+            }
+        }
+
+        return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar, 'form' => $this->formData];
+    }
+
+    public function form()
+    {
+        $this->form[] = new Form($this->config);
+        return end($this->form);
     }
 
     public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class = null, $id = null)
