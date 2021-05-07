@@ -1,6 +1,7 @@
-@extends('layouts.portal.app')
-@section('navLink')
-    {!!   $cc['navLink'] !!}
+@extends('sledge::layouts.app')
+
+@section('navbar')
+    @include('sledge::layouts.sections.navbar')
 @endsection
 
 @section('content')
@@ -13,37 +14,28 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body card-dashboard">
-                            @if(!empty($cc['metaData']))
-                                @foreach($cc['metaData'] as $meta)
-                                    <a href="{{ $meta['url'] }}" class="btn btn-primary mr-1 mb-1">
-                                        <i class="{{ $meta['icon'] }}"></i>
-                                        <span class="align-middle ml-25">{{ $meta['text'] }}</span>
+                            @if(!empty($sledge['button']))
+                                @foreach($sledge['button'] as $btn)
+                                    <a href="{{ $btn['url'] }}" class="btn btn-primary mr-1 mb-1">
+                                        <i class="{{ $btn['icon'] }}"></i>
+                                        <span class="align-middle ml-25">{{ $btn['text'] }}</span>
                                     </a>
                                 @endforeach
                             @endif
-
                             <div class="table-responsive">
                                 <table id="dataTable" class="table">
                                     <thead>
                                     <tr>
-                                        @foreach($cc['table'] as $c)
-                                            @if(isset($c['columnAction']))
-                                                <th>{{ 'عملیات' }}</th>
+                                        @foreach($sledge['table'] as $column)
+                                            @if(is_array($column->variables) && !empty($column->variables))
+                                                <th>{{ config('sledge.index.actionColumnName') }}</th>
                                             @else
-                                                <th>{{ $c['text'] }}</th>
+                                                <th>{{ $column->title }}</th>
                                             @endif
                                         @endforeach
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {{--@foreach($cc[0] as $key => $data)
-                                        <tr>
-                                            <td>{{ ++$key }}</td>
-                                            @foreach($data as $k=>$d)
-                                                <td>{!! $d !!} </td>
-                                            @endforeach
-                                        </tr>
-                                    @endforeach--}}
                                     </tbody>
                                     <tfoot>
                                     <tr>
@@ -64,7 +56,7 @@
     </form>
 @endsection
 
-@section('my_js')
+@section('js')
     <script>
         $(document).ready(function () {
 
@@ -77,12 +69,11 @@
                     "dataSrc": function (json) {
                         return json.data;
                     },beforeSend: function() {
-                        let block_ele = $('.table-responsive');
-                        $(block_ele).block({
-                            message: '<div class="spinner-grow text-primary" role="status"></div>',
+                        $($('.table-responsive')).block({
+                            message: '<div class="bx bx-reset icon-spin font-medium-2" style="padding-bottom:1.75px"></div>',
                             overlayCSS: {
                                 backgroundColor: 'white',
-                                opacity: 0.3,
+                                opacity: 0,
                                 cursor: 'wait'
                             },
                             css: {
@@ -91,10 +82,8 @@
                                 backgroundColor: 'transparent'
                             }
                         });
-
                     },complete: function() {
-                        let block_ele = $('.table-responsive');
-                        $(block_ele).unblock();
+                        $($('.table-responsive')).unblock();
                     }
                 }
             });
@@ -137,40 +126,8 @@
                     }
                 });
             });
-
-
-            /*"ajax": {
-                "type": "GET",
-                    "url": "ss",
-                    "dataSrc": function (json) {
-                    return json.data;
-                }
-            }*/
-
-            /*var table = $('#tablename').DataTable( {
-                Processing: true,
-                serverSide: true,
-                ajax: '',
-                columns: [
-                    { data: 0 },
-                    { data: 1 },
-                    { data: 2 },
-                    { data: 3 },
-                    { data: 4 }
-                ]
-            } );*/
-            // console.log(table.page.info())
-            // $('#tablename').on( 'page.dt', function () {
-            //     var info = table.page.info();
-            //     console.log(table.page.info())
-            //     alert('Showing page: '+info.page+' of '+info.pages)
-            //     // $('#pageInfo').html( 'Showing page: '+info.page+' of '+info.pages );
-            // } );
         });
 
     </script>
-
-
-
     {!! (isset($customScript)) ? $customScript : '' !!}
 @stop
