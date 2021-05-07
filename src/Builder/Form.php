@@ -39,13 +39,13 @@ class Form
 
     public function open(): Form
     {
-        $this->headerData = view('sledge::structure.openForm')->with('data', $this);
+        $this->headerData = view('sledge::element.openForm')->with('data', $this);
         return $this;
     }
 
-    public function close()
+    public function close(): Form
     {
-        $this->footerData = view('sledge::structure.closeForm');
+        $this->footerData = view('sledge::element.closeForm');
         return $this;
     }
     public function input($type): Form
