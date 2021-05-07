@@ -2,6 +2,7 @@
 
 namespace MiladZamir\Sledge\Builder;
 
+use http\Env\Request;
 use MiladZamir\Sledge\Helper\FormConfig;
 use MiladZamir\Sledge\Helper\Helper;
 
@@ -12,14 +13,9 @@ class Builder
     private $route;
     private $value;
     private $table = [];
-    private $columnAction = [];
-    private $searchAttributes = [];
-    private $button = [];
-    private $navbar;
     private $module;
-    private $formAction;
-    private $formMethod;
-    private $formMethodField;
+    private $config;
+    private $script;
     public $data = [
         'header' => [],
         'body' => [],
@@ -33,34 +29,22 @@ class Builder
         $this->route = $route;
     }
 
-    public function queryConfig($orderBy = "id DESC", $where = null, $whereIn = null)
+    public function column($name)
     {
-        $this->value = $this->model;
-
-        if ($orderBy != null)
-            $this->value = $this->model->orderByRaw($orderBy);
-
-        if ($where != null)
-            $this->value = $this->model->where($where);
-
-        if ($whereIn != null)
-            $this->value = $this->model->whereIn($whereIn[0], $whereIn[1]);
+        $this->table[] = new Column($name);
+        return end($this->table);
     }
 
-    public function dataTableConfig($searchAttributes = [])
+    public function config($config)
     {
-        $this->searchAttributes = $searchAttributes;
+        $this->config = new Config($config, $this->model, $this->modelName);
+        return $this->config;
     }
 
-    public function pageConfig($module, $button = 'auto', $navbar = 'auto')
-    {
-        $this->module = $module;
 
-        $this->createButton($button);
-        $this->createNavbar($navbar);
-    }
 
-    public function column($name, $text, $callBack = null)
+
+    /*public function column($name, $text, $callBack = null)
     {
         $data = [
             'name' => $name,
@@ -68,9 +52,9 @@ class Builder
             'callBack' => $callBack
         ];
         array_push($this->table, $data);
-    }
+    }*/
 
-    public function columnAction($routeName, $variables = [], $title, $icon, $acl = false, $class = null)
+    /*public function columnAction($routeName, $variables = [], $title, $icon, $acl = false, $class = null)
     {
         $data = [
             'routeName' => $routeName,
@@ -80,11 +64,11 @@ class Builder
             'class' => ($class != null) ? implode(' ', $class) : '',
         ];
         array_push($this->columnAction, $data);
-    }
+    }*/
 
     public function getDataTable($request)
     {
-        $mmx = $this->value->count();
+        /*$mmx = $this->value->count();
 
         $start = (int)$request->input('start');
 
@@ -112,7 +96,37 @@ class Builder
         if ($page < 0)
             $page = 1;
 
+        $request->request->add(['page' => $page]);*/
+
+
+        $mmx = $this->value->count();
+        $start = (int)$request->input('start');
+        $length = (int)$request->input('length');
+
+        if($request->search['value'] != null) {
+            $data = $this->config->value;
+            foreach ($this->config->searchAttributes as $key => $sv) {
+                if ($key == 0) {
+                    $data->where($sv, 'LIKE', "%" . ($request->search['value'] . "%"));
+                } else {
+                    $data->orWhere($sv, 'LIKE', "%" . ($request->search['value'] . "%"));
+                }
+            }
+            $mmxF = $data->count();
+            $data = $data->skip($start)->take($length)->get();
+        } else {
+            $data = $this->config->value->skip($start)->take($length)->get();
+        }
+
+        $page = ($start / $length) + 1;
+        if (empty($page))
+            $page = 1;
+
+        if ($page < 0)
+            $page = 1;
+
         $request->request->add(['page' => $page]);
+
 
         $lastD[][] = null;
         foreach ($data as $k => $dat) {
@@ -183,96 +197,102 @@ class Builder
         ]);
     }
 
-    public function render()
-    {
-        if ($this->columnAction != null)
-            array_push($this->table, ['columnAction' => $this->columnAction]);
 
-        return ['table' => $this->table, 'button' => $this->button, 'navbar' => $this->navbar, 'data' => $this->data];
-    }
-
-    public function createButton($button)
-    {
-        $model = lcfirst(Helper::getModel($this->modelName));
-
-        if (!is_array($button) && $button == 'auto') {
-            $this->button = array([
-                'url' => route($model . '.create'),
-                'text' => config('sledge.index.addLinkText'),
-                'icon' => config('sledge.index.addLinkIcon'),
-            ]);
-            return 0;
-        }
-
-        foreach ($button as $key => $btn) {
-            $this->button[$key] = [
-                'url' => $btn[0],
-                'text' => $btn[1],
-                'icon' => $btn[2],
-            ];
-        }
-    }
-
-    public function createNavbar($navbar)
-    {
-        if (!is_array($navbar) && $navbar == 'auto') {
-            $navbarConfig = Helper::routePrefix(request()->route()->getName());
-            $this->navbar = [
-                '<i class="bx bx-home-alt"></i>' => config('sledge.route.defaultRoute'),
-                $this->module => 'blog.index',
-                $navbarConfig[1] => request()->route()->getName()
-            ];
-            /*switch ($navbarConfig[0]) {
-                case 'index':
-                    $this->navbar = [
-                        '<i class="bx bx-home-alt"></i>' => config('sledge.route.defaultRoute'),
-                        $this->module => 'blog.index',
-                        $navbarConfig[1] => request()->route()->getName()
-                        ];
-                    break;
-                case 'create':
-                    $this->navbar = [
-                        '<i class="bx bx-home-alt"></i>' => config('sledge.route.defaultRoute'),
-                        $this->module => 'blog.index',
-                        $navbarConfig[1] => request()->route()->getName()
-                    ];
-                    break;
-                case 'edit':
-//                    dd('edit');
-                    break;
-                default:
-//                    dd('DEFAULT');
-
-            }*/
-        }
-
-    }
-
-    public function formConfig($form = 'auto')
-    {
-        $model = lcfirst(Helper::getModel($this->modelName));
-
-        if ($form == 'auto'){
-            $formConfig = Helper::routePrefix(request()->route()->getName());
-
-            if ($formConfig[0] == 'create'){
-                $this->formMethod = "POST";
-                $this->formMethodField = "POST";
-                $this->formAction = $model .'.store';
+        public function render()
+        {
+            $start = 10;
+            $length = 5;
+            $a = 1;
+            if (null != null) {
+            $data = $this->config->value;
+            foreach ($this->config->searchAttributes as $key => $sv) {
+                if ($key == 0) {
+                    $data->where($sv, 'LIKE', "%" . $a . "%");
+                } else {
+                    $data->orWhere($sv, 'LIKE', "%" . $a . "%");
+                }
             }
-            if ($formConfig[0] == 'edit'){
-                $this->formMethod = "POST";
-                $this->formMethodField = "PATCH";
-                $this->formAction = $model .'.update';
-            }
-        }else{
-            $this->formMethod = $form[0];
-            $this->formMethodField = $form[1];
-            $this->formAction = $form[2];
+            $mmxF = $data->count();
+            $data = $data->skip($start)->take($length)->get();
+        } else {
+            $data = $this->config->value->get();
         }
-    }
 
-    public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class= null, $id= null)
+            $page = ($start / $length) + 1;
+            if (empty($page))
+                $page = 1;
+
+            if ($page < 0)
+                $page = 1;
+
+//            $a->request->add(['page' => $page]);
+
+            $lastD[][] = null;
+            foreach ($data as $k => $dat) {
+                $secData = clone $dat;
+                foreach ($this->table as $key => $table) {
+                    if (is_array($table->variables) && !empty($table->variables)) {
+                        $routeStrings = '';
+                        foreach ($table->variables as $ca) {
+                            $routeVariables = [];
+                            foreach ($ca['variables'] as $variable) {
+                                foreach ($variable as $var => $v) {
+                                    $routeVariables += [$var => $dat->{$v}];
+                                }
+                            }
+                            $route = route($ca['routeName'], $routeVariables);
+                            $routeString = config('sledge.columnAction.route');
+                            $routeString = str_replace('*1', $ca['class'], $routeString);
+                            $routeString = str_replace('*2', $route, $routeString);
+                            $routeString = str_replace('*3', $ca['icon'], $routeString);
+                            $routeString = str_replace('*4', $ca['title'], $routeString);
+                            $routeStrings .= $routeString;
+                        }
+                        $lastD[$k][$key] = str_replace('*1', $routeStrings, config('sledge.columnAction.static'));
+                        continue;
+                    }
+
+                    $str = explode('.', $table->name);
+                    $count = count($str);
+                    if ($table['name'] == '#') {
+                        $lastD[$k][$key] = $k + 1;
+                        continue;
+                    }
+                    if ($count == 1) {
+                        if (isset($table['callBack'])) {
+                            $lastD[$k][$key] = $table['callBack']($dat->{$str[0]});
+                            continue;
+                        }
+                        $lastD[$k][$key] = $dat->{$str[0]};
+                        continue;
+                    }
+                    if ($count > 1) {
+                        for ($i = 0; $i < count($str); $i++) {
+                            $dat = $dat->{$str[$i]};
+                            if ($dat == null) {
+                                $lastD[$k][$key] = '-';
+                                break;
+                            }
+                            $lastD[$k][$key] = $dat;
+                        }
+                        if (isset($table['callBack'])) {
+                            $lastD[$k][$key] = $table['callBack']($dat);
+                        }
+                    }
+
+                    $dat = $secData;
+                }
+            }
+            $this->data = $lastD;
+
+            return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar];
+         /*   if ($this->columnAction != null)
+                array_push($this->table, ['columnAction' => $this->columnAction]);
+
+            return ['table' => $this->table, 'button' => $this->button, 'navbar' => $this->navbar, 'data' => $this->data, 'script' => $this->script];*/
+        }
+
+    public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class = null, $id = null)
     {
         $data = [
             'action' => $this->formAction,
@@ -288,14 +308,14 @@ class Builder
         array_push($this->data['header'], view('sledge::structure.openForm')->with('data', $data));
     }
 
-    public function input($type, $name, $label, $validate=[], $value=null,$placeholder=null, $class=null, $id=null)
+    public function input($type, $name, $label, $validate = [], $value = null, $placeholder = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
             'type' => $type,
             'name' => $name,
             'value' => $value,
-            'validate' => $validate,//implode(" ", $validate)
+            'validate' => $validate,
             'label' => $label,
             'placeholder' => $placeholder,
             'class' => $class,
@@ -304,12 +324,12 @@ class Builder
         array_push($this->data['body'], view('sledge::element.input')->with('data', $data));
     }
 
-    public function file($name, $label, $validate=[],$value = null, $placeholder=null, $size = [], $class=null, $id=null)
+    public function file($name, $label, $validate = [], $value = null, $placeholder = null, $size = [], $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
             'name' => $name,
-            'validate' => $validate,//implode(" ", $validate)
+            'validate' => $validate,
             'value' => $value,
             'label' => $label,
             'placeholder' => $placeholder,
@@ -320,7 +340,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.file')->with('data', $data));
     }
 
-    public function select($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
+    public function select($name, $label, $dKey, $validate = [], $value, $old = null, $placeholder = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -338,7 +358,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.select')->with('data', $data));
     }
 
-    public function multiSelect($name, $label, $dKey, $validate=[], $value, $old=null, $placeholder=null, $class=null, $id=null)
+    public function multiSelect($name, $label, $dKey, $validate = [], $value, $old = null, $placeholder = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -355,7 +375,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.multiSelect')->with('data', $data));
     }
 
-    public function checkbox($name, $label, $dKey, $validate=[], $value, $old=null, $class=null, $id=null)
+    public function checkbox($name, $label, $dKey, $validate = [], $value, $old = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -372,7 +392,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.checkbox')->with('data', $data));
     }
 
-    public function textarea($type, $name, $label, $validate=[], $value=null, $row = null,$placeholder=null, $class=null, $id=null)
+    public function textarea($type, $name, $label, $validate = [], $value = null, $row = null, $placeholder = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -389,7 +409,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.textarea')->with('data', $data));
     }
 
-    public function radio($name, $label, $dKey, $validate=[], $value, $old=null, $class=null, $id=null)
+    public function radio($name, $label, $dKey, $validate = [], $value, $old = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -406,7 +426,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.radios')->with('data', $data));
     }
 
-    public function date($name, $label, array $bind,$validate=[], $value=null, $old=null, $placeholder=null, $class=null, $id=null)
+    public function date($name, $label, array $bind, $validate = [], $value = null, $old = null, $placeholder = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -423,7 +443,7 @@ class Builder
         array_push($this->data['body'], view('sledge::element.datePicker')->with('data', $data));
     }
 
-    public function holder($selector, $label, array $bind, $value = null, $old=null, $class=null, $id=null)
+    public function holder($selector, $label, array $bind, $value = null, $old = null, $class = null, $id = null)
     {
         $data = [
             'uniqueId' => Helper::createUniqueString(5),
@@ -441,7 +461,7 @@ class Builder
 
     public function customView($src, $data = null, $col = 'col-6')
     {
-        array_push($this->data['body'], view('sledge::'. $src)->with(compact('data', 'col')));
+        array_push($this->data['body'], view('sledge::' . $src)->with(compact('data', 'col')));
     }
 
     public function submit($value, $name = null, $class = null, $id = null)
@@ -459,6 +479,21 @@ class Builder
     public function closeForm()
     {
         array_push($this->data['footer'], view('sledge::structure.closeForm'));
+    }
+
+    public function setScript($bladeFile, $data = null)
+    {
+        $this->script = view('sledge::scripts.' . $bladeFile)->with(compact('data'));
+    }
+
+    public function listenScript()
+    {
+        ob_start();
+    }
+
+    public function renderScript()
+    {
+        return ob_get_clean();
     }
 
 }
