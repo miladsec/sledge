@@ -40,13 +40,14 @@ class Builder
         $this->config = new Config($config, $this->model, $this->modelName);
         return $this->config;
     }
+
     public function getDataTable($request)
     {
         $mmx = $this->config->value->count();
         $start = (int)$request->input('start');
         $length = (int)$request->input('length');
 
-        if($request->search['value'] != null) {
+        if ($request->search['value'] != null) {
             $data = $this->config->value;
             foreach ($this->config->searchAttributes as $key => $sv) {
                 if ($key == 0) {
@@ -79,7 +80,7 @@ class Builder
                     $routeStrings = '';
                     $routeVariables = [];
                     foreach ($table->variables as $variable) {
-                        foreach ($variable as $var => $dValue){
+                        foreach ($variable as $var => $dValue) {
                             $routeVariables += [$var => $dat->{$dValue}];
                         }
                     }
@@ -139,44 +140,10 @@ class Builder
         ]);
     }
 
-
-        public function render()
-        {
-            $start = 10;
-            $length = 5;
-            $a = 1;
-            if (null != null) {
-            $data = $this->config->value;
-            foreach ($this->config->searchAttributes as $key => $sv) {
-                if ($key == 0) {
-                    $data->where($sv, 'LIKE', "%" . $a . "%");
-                } else {
-                    $data->orWhere($sv, 'LIKE', "%" . $a . "%");
-                }
-            }
-            $mmxF = $data->count();
-            $data = $data->skip($start)->take($length)->get();
-        } else {
-            $data = $this->config->value->get();
-        }
-
-            $page = ($start / $length) + 1;
-            if (empty($page))
-                $page = 1;
-
-            if ($page < 0)
-                $page = 1;
-
-//            $a->request->add(['page' => $page]);
-
-
-
-            return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar];
-         /*   if ($this->columnAction != null)
-                array_push($this->table, ['columnAction' => $this->columnAction]);
-
-            return ['table' => $this->table, 'button' => $this->button, 'navbar' => $this->navbar, 'data' => $this->data, 'script' => $this->script];*/
-        }
+    public function render()
+    {
+        return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar];
+    }
 
     public function openForm($name = null, $enctype = null, $novalidate = 'novalidate', $autocomplete = 'off', $accept_charset = 'utf-8', $class = null, $id = null)
     {
