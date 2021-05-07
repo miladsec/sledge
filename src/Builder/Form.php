@@ -27,11 +27,13 @@ class Form
     public $uniqueId;
     public $selectConfig;
     public $oldValue;
+    public $col;
 
 
     public function __construct($config)
     {
         $this->config = $config;
+        $this->col = config('sledge.create.defaultCol');
         $this->uniqueId = Helper::createUniqueString(5);
     }
 
@@ -60,6 +62,9 @@ class Form
                 break;
             case 'select':
                 $this->bodyData = view('sledge::element.select')->with('data', $this);
+                break;
+            case 'multiselect':
+                $this->bodyData = view('sledge::element.multiselect')->with('data', $this);
                 break;
             default:
                 dd('!');
@@ -148,6 +153,12 @@ class Form
     public function oldValue($oldValue): Form
     {
         $this->oldValue = $oldValue;
+        return $this;
+    }
+
+    public function col($col= 'col-6'): Form
+    {
+        $this->col = $col;
         return $this;
     }
 
