@@ -14,6 +14,9 @@ class Config
     public $searchAttributes = [];
     public $module;
     public $modelName;
+    public $formMethod;
+    public $formMethodField;
+    public $formAction;
 
     public function __construct($config, $model, $modelName)
     {
@@ -102,7 +105,7 @@ class Config
         return $this;
     }
 
-    public function formConfig($form = 'auto')
+    public function formConfig($form = 'auto'): Config
     {
         $model = lcfirst(Helper::getModel($this->modelName));
 
