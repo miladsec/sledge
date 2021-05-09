@@ -52,4 +52,9 @@ class Helper
             }
         }
     }
+    public static function flashMessage($type, $title)
+    {
+        session()->flash('type', $type);
+        session()->flash('title', $title);
+    }
 }
