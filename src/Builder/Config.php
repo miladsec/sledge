@@ -4,6 +4,7 @@
 namespace MiladZamir\Sledge\Builder;
 
 
+use Illuminate\Http\Request;
 use MiladZamir\Sledge\Helper\Helper;
 
 class Config
@@ -90,16 +91,16 @@ class Config
 
             if ($navbarConfig[0] == 'edit'){
                 $this->navbar = [
-                    '<i class="bx bx-home-alt"></i>' => config('sledge.route.defaultRoute'),
-                    $this->module => 'blog.index',
-                    $navbarConfig[1] => $model.'.edit'
+                    '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
+                    $this->module => route('blog.index'),
+                    $navbarConfig[1] => route($model.'.edit', [$model => \request()->route('blog')])
                 ];
                 return $this;
             }
             $this->navbar = [
-                '<i class="bx bx-home-alt"></i>' => config('sledge.route.defaultRoute'),
-                $this->module => 'blog.index',
-                $navbarConfig[1] => request()->route()->getName()
+                '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
+                $this->module => route('blog.index'),
+                $navbarConfig[1] => route(request()->route()->getName())
             ];
         }
         return $this;
@@ -111,16 +112,15 @@ class Config
 
         if ($form == 'auto'){
             $formConfig = Helper::routePrefix(request()->route()->getName());
-
             if ($formConfig[0] == 'create'){
                 $this->formMethod = "POST";
                 $this->formMethodField = "POST";
-                $this->formAction = $model .'.store';
+                $this->formAction = route($model .'.store');
             }
             if ($formConfig[0] == 'edit'){
                 $this->formMethod = "POST";
                 $this->formMethodField = "PATCH";
-                $this->formAction = $model .'.update';
+                $this->formAction = route($model .'.update', [$model => \request()->route('blog')]);
             }
         }else{
             $this->formMethod = $form[0];
