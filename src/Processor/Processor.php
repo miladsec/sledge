@@ -14,7 +14,7 @@ class Processor
     public $result;
     public $data;
 
-    public function __construct($model, $request, $data)
+    public function __construct($model, $request, $data = null)
     {
         $this->model = app($model);
         $this->modelName = $model;
