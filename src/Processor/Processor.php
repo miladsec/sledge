@@ -12,12 +12,14 @@ class Processor
     public $modelName;
     public $request;
     public $result;
+    public $data;
 
-    public function __construct($model, $request)
+    public function __construct($model, $request, $data)
     {
         $this->model = app($model);
         $this->modelName = $model;
         $this->request = $request;
+        $this->data = $data;
     }
 
     public function create(): Processor
@@ -35,11 +37,15 @@ class Processor
     }
     public function update(): Processor
     {
-        $result = $this->model->update($this->request->all());
-        if ($result)
-            $this->result = true;
-        else
+        try {
+            $result = $this->data->update($this->request->all());
+            if ($result)
+                $this->result = true;
+            else
+                $this->result = false;
+        }catch (\Exception $e){
             $this->result = false;
+        }
         return $this;
     }
 
