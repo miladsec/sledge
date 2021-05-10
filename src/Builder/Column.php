@@ -30,19 +30,19 @@ class Column
         return $this;
     }
 
-    public function action($variables = [])
+    public function action($variables = []): Column
     {
         $this->variables = $variables;
         return $this;
     }
 
-    public function cssClass($cssClass)
+    public function cssClass($cssClass): Column
     {
         $this->cssClass = $cssClass;
         return $this;
     }
 
-    public function icon($icon)
+    public function icon($icon): Column
     {
         $this->icon = $icon;
         return $this;

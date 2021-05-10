@@ -49,6 +49,20 @@ class Processor
         return $this;
     }
 
+    public function delete(): Processor
+    {
+        try {
+            $result = $this->data->delete();
+            if ($result)
+                $this->result = true;
+            else
+                $this->result = false;
+        }catch (\Exception $e){
+            $this->result = false;
+        }
+        return $this;
+    }
+
     public function returnBack($haveAlert = true): \Illuminate\Http\RedirectResponse
     {
         if ($this->result){
