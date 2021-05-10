@@ -18,6 +18,7 @@ class Builder
         'body' => [],
         'footer' => []
     ];
+    private $data;
 
     public function __construct($model)
     {
