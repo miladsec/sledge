@@ -28,6 +28,7 @@ class Form
     public $inputConfig;
     public $oldValue;
     public $col;
+    public $row;
 
     public function __construct($config)
     {
@@ -70,6 +71,9 @@ class Form
                 break;
             case 'checkbox':
                 $this->bodyData = view('sledge::element.checkbox')->with('data', $this);
+                break;
+            case 'textarea':
+                $this->bodyData = view('sledge::element.textarea')->with('data', $this);
                 break;
             case 'submit':
                 $this->footerData = view('sledge::element.submit')->with('data', $this);
@@ -164,10 +168,17 @@ class Form
         return $this;
     }
 
-    public function col($col= 'col-6'): Form
+    public function col($col = 'col-6'): Form
     {
         $this->col = $col;
         return $this;
     }
+
+    public function row($row = '6'): Form
+    {
+        $this->row = $row;
+        return $this;
+    }
+
 
 }
