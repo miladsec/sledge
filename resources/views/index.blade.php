@@ -1,7 +1,7 @@
 @extends('sledge::layouts.app')
 
-@section('navbar')
-    @include('sledge::layouts.sections.navbar')
+@section('breadcrumb')
+    @include('sledge::layouts.sections.breadcrumb')
 @endsection
 
 @section('content')
@@ -89,15 +89,15 @@
             });
 
             @if(Session::has('type'))
-            Swal.fire({
-                position: 'top-center',
-                type: '{{ Session::get('type') }}',
-                title: '{{ Session::get('title') }}',
-                showConfirmButton: false,
-                timer: 2500,
-                confirmButtonClass: 'btn btn-primary',
-                buttonsStyling: false,
-            });
+                Swal.fire({
+                    position: 'top-center',
+                    type: '{{ Session::get('type') }}',
+                    title: '{{ Session::get('title') }}',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    confirmButtonClass: 'btn btn-primary',
+                    buttonsStyling: false,
+                });
             @endif
 
             $(document).on('click', 'a.confirm', function(e) {
@@ -129,5 +129,7 @@
         });
 
     </script>
-    {!! (isset($customScript)) ? $customScript : '' !!}
+    @if(!empty($sledge['button']))
+        {!! $sledge['script'] !!}
+    @endif
 @stop

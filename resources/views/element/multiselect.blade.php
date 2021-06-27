@@ -1,10 +1,10 @@
 @php
-    $dKey0 = strval(key($data->selectConfig));
+    $dKey0 = strval(key($data->inputConfig));
 
-    if (!is_array($data->selectConfig[$dKey0]))
-        $dKey1 = strval($data->selectConfig[$dKey0]);
+    if (!is_array($data->inputConfig[$dKey0]))
+        $dKey1 = strval($data->inputConfig[$dKey0]);
     else
-        $dKey1 = $data->selectConfig[$dKey0];
+        $dKey1 = $data->inputConfig[$dKey0];
 @endphp
 <div class="form-group">
     <label for="{{ $data->uniqueId ?? '' }}">{{ $data->label ?? '' }}</label>

@@ -1,7 +1,7 @@
 @extends('sledge::layouts.app')
 
-@section('navbar')
-    @include('sledge::layouts.sections.navbar')
+@section('breadcrumb')
+    @include('sledge::layouts.sections.breadcrumb')
 @endsection
 
 @section('content')

@@ -1,5 +1,5 @@
 <form
-    action="{{ route($data->config->formAction ?? '') }}"
+    action="{{ $data->config->formAction ?? '' }}"
     method="{{ $data->config->formMethod ?? '' }}"
     name="{{ $data->name ?? '' }}"
     enctype="{{ $data->enctype ?? '' }}"
