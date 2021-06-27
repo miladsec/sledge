@@ -20,6 +20,7 @@ class Builder
         'footer' => []
     ];
     private $data;
+    private $script;
 
     public function __construct($model)
     {
@@ -37,6 +38,12 @@ class Builder
     {
         $this->config = new Config($config, $this->model, $this->modelName);
         return $this->config;
+    }
+
+    public function script($scriptFile)
+    {
+        $script = new Script($scriptFile);
+        $this->script = $script->scriptFile;
     }
 
     public function getDataTable($request): \Illuminate\Http\JsonResponse
@@ -167,7 +174,7 @@ class Builder
                 $this->table = array_values($this->table);
             }
         }
-        return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar, 'form' => $this->formData];
+        return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar, 'form' => $this->formData, 'script' => $this->script];
     }
 
     public function form()
@@ -284,16 +291,6 @@ class Builder
     public function setScript($bladeFile, $data = null)
     {
         $this->script = view('sledge::scripts.' . $bladeFile)->with(compact('data'));
-    }
-
-    public function listenScript()
-    {
-        ob_start();
-    }
-
-    public function renderScript()
-    {
-        return ob_get_clean();
     }
 
 }
