@@ -17,6 +17,7 @@ class Config
     public $formMethodField;
     public $formAction;
     public $button;
+    public $breadcrumb;
 
     public function __construct($config, $model, $modelName)
     {
@@ -92,7 +93,7 @@ class Config
                 $this->breadcrumb = [
                     '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
                     $this->module => route('blog.index'),
-                    $breadcrumbConfig[1] => route($model.'.edit', [$model => \request()->route('blog')])
+                    $breadcrumbConfig[1] => route($model.'.edit', [$model => request()->route('blog')])
                 ];
                 return $this;
             }
@@ -119,7 +120,7 @@ class Config
             if ($formConfig[0] == 'edit'){
                 $this->formMethod = "POST";
                 $this->formMethodField = "PATCH";
-                $this->formAction = route($model .'.update', [$model => \request()->route('blog')]);
+                $this->formAction = route($model .'.update', [$model => request()->route('blog')]);
             }
         }else{
             $this->formMethod = $form[0];
