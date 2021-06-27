@@ -3,8 +3,6 @@
 
 namespace MiladZamir\Sledge\Builder;
 
-
-use Illuminate\Http\Request;
 use MiladZamir\Sledge\Helper\Helper;
 
 class Config
@@ -18,6 +16,7 @@ class Config
     public $formMethod;
     public $formMethodField;
     public $formAction;
+    public $button;
 
     public function __construct($config, $model, $modelName)
     {
@@ -26,7 +25,7 @@ class Config
         $this->modelName = $modelName;
     }
 
-    public function queryConfig($orderBy = "id DESC", $where = null, $whereIn = null)
+    public function queryConfig($orderBy = "id DESC", $where = null, $whereIn = null): Config
     {
         $this->value = $this->model;
 
@@ -42,13 +41,13 @@ class Config
         return $this;
     }
 
-    public function dataTableConfig($searchAttributes = [])
+    public function dataTableConfig($searchAttributes = []): Config
     {
         $this->searchAttributes = $searchAttributes;
         return $this;
     }
 
-    public function pageConfig($module, $button = 'auto', $breadcrumb = 'auto')
+    public function pageConfig($module, $button = 'auto', $breadcrumb = 'auto'): Config
     {
         $this->module = $module;
 
@@ -59,7 +58,7 @@ class Config
     }
 
 
-    public function createButton($button)
+    public function createButton($button): Config
     {
         $model = lcfirst(Helper::getModel($this->modelName));
 
@@ -82,7 +81,7 @@ class Config
         return $this;
     }
 
-    public function createBreadcrumb($breadcrumb)
+    public function createBreadcrumb($breadcrumb): Config
     {
         $model = lcfirst(Helper::getModel($this->modelName));
 
