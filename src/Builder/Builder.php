@@ -2,7 +2,7 @@
 
 namespace MiladZamir\Sledge\Builder;
 
-use \Illuminate\Http\JsonResponse;
+use Illuminate\Http\JsonResponse;
 
 class Builder
 {
@@ -17,7 +17,6 @@ class Builder
         'body' => [],
         'footer' => []
     ];
-    private $data;
     private $script;
 
     public function __construct($model)
@@ -132,13 +131,13 @@ class Builder
                 $dat = $secData;
             }
         }
-        $this->data = $lastD;
+        $data1 = $lastD;
 
-        if ($this->data[0][0] == null)
-            $this->data = [];
+        if ($data1[0][0] == null)
+            $data1 = [];
 
         return response()->json([
-            'data' => $this->data,
+            'data' => $data1,
             "draw" => $request->input('draw'),
             "recordsTotal" => $mmx,
             "recordsFiltered" => $mmxF ?? $mmx,
