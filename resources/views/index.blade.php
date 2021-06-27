@@ -27,7 +27,7 @@
                                     <thead>
                                     <tr>
                                         @foreach($sledge['table'] as $column)
-                                            @if(is_array($column->variables) && !empty($column->variables))
+                                            @if($column == 'action')
                                                 <th>{{ config('sledge.index.actionColumnName') }}</th>
                                             @else
                                                 <th>{{ $column->title }}</th>
@@ -117,7 +117,7 @@
                     if (result.value) {
                         let url = $(data).attr('href')
 
-                        if ($(data).hasClass('dl')){
+                        if ($(data).hasClass('delete')){
                             $("#deleteForm").attr('action', url).submit();
                         }else {
                             window.location.href = url;
