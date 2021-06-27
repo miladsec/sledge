@@ -48,12 +48,12 @@ class Config
         return $this;
     }
 
-    public function pageConfig($module, $button = 'auto', $navbar = 'auto')
+    public function pageConfig($module, $button = 'auto', $breadcrumb = 'auto')
     {
         $this->module = $module;
 
         $this->createButton($button);
-        $this->createNavbar($navbar);
+        $this->createBreadcrumb($breadcrumb);
 
         return $this;
     }
@@ -82,25 +82,25 @@ class Config
         return $this;
     }
 
-    public function createNavbar($navbar)
+    public function createBreadcrumb($breadcrumb)
     {
         $model = lcfirst(Helper::getModel($this->modelName));
 
-        if (!is_array($navbar) && $navbar == 'auto') {
-            $navbarConfig = Helper::routePrefix(request()->route()->getName());
+        if (!is_array($breadcrumb) && $breadcrumb == 'auto') {
+            $breadcrumbConfig = Helper::routePrefix(request()->route()->getName());
 
-            if ($navbarConfig[0] == 'edit'){
-                $this->navbar = [
+            if ($breadcrumbConfig[0] == 'edit'){
+                $this->breadcrumb = [
                     '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
                     $this->module => route('blog.index'),
-                    $navbarConfig[1] => route($model.'.edit', [$model => \request()->route('blog')])
+                    $breadcrumbConfig[1] => route($model.'.edit', [$model => \request()->route('blog')])
                 ];
                 return $this;
             }
-            $this->navbar = [
+            $this->breadcrumb = [
                 '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
                 $this->module => route('blog.index'),
-                $navbarConfig[1] => route(request()->route()->getName())
+                $breadcrumbConfig[1] => route(request()->route()->getName())
             ];
         }
         return $this;

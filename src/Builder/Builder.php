@@ -174,7 +174,7 @@ class Builder
                 $this->table = array_values($this->table);
             }
         }
-        return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar, 'form' => $this->formData, 'script' => $this->script];
+        return ['table' => $this->table, 'button' => $this->config->button, 'breadcrumb' => $this->config->breadcrumb, 'form' => $this->formData, 'script' => $this->script];
     }
 
     public function form()
