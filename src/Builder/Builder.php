@@ -154,77 +154,19 @@ class Builder
             }
         }
         if (!empty($this->table) &&  is_array($this->table)){
+            $haveAction = false;
             foreach ($this->table as $key=>$table){
                 if (isset($table->variables)){
                     array_push($this->actions, $table);
                     unset($this->table[$key]);
+                    $haveAction = true;
                 }
             }
-            array_push($this->table, 'action');
-            $this->table = array_values($this->table);
-        }
-
-        $data = $this->config->value->get();
-        $lastD[][] = null;
-        foreach ($data as $k => $dat) {
-            $secData = clone $dat;
-            foreach ($this->table as $key => $table) {
-                if ($table == 'action'){
-                    if (is_array($this->actions) && !empty($this->actions)) {
-                        $routeStrings = '';
-                        foreach ($this->actions as $action){
-                            $routeVariables = [];
-                            foreach ($action->variables as $variable) {
-                                foreach ($variable as $var => $dValue) {
-                                    $routeVariables[$var] = $dat->{$dValue};
-                                }
-                            }
-                            $route = route($action->name, $routeVariables);
-                            $routeString = config('sledge.columnAction.route');
-                            $routeString = str_replace('*1', $action->cssClass, $routeString);
-                            $routeString = str_replace('*2', $route, $routeString);
-                            $routeString = str_replace('*3', $action->icon, $routeString);
-                            $routeString = str_replace('*4', $action->title, $routeString);
-                            $routeStrings .= $routeString;
-                        }
-                        $lastD[$k][$key] = str_replace('*1', $routeStrings, config('sledge.columnAction.static'));
-                        continue;
-                    }
-                }
-
-                $str = explode('.', $table->name);
-                $count = count($str);
-                if ($table->name == '#') {
-                    $lastD[$k][$key] = $k + 1;
-                    continue;
-                }
-                if ($count == 1) {
-                    if (!empty($table->callBack)) {
-                        $lastD[$k][$key] = $table->callBack($dat->{$str[0]})->callBack;
-                        continue;
-                    }
-                    $lastD[$k][$key] = $dat->{$str[0]};
-                    continue;
-                }
-                if ($count > 1) {
-                    for ($i = 0; $i < count($str); $i++) {
-                        $dat = $dat->{$str[$i]};
-                        if ($dat == null) {
-                            $lastD[$k][$key] = '-';
-                            break;
-                        }
-                        $lastD[$k][$key] = $dat;
-                    }
-                    if (!empty($table->callBack)) {
-                        $lastD[$k][$key] = $table->callBack($dat)->callBack;
-                    }
-                }
-                $dat = $secData;
+            if ($haveAction){
+                array_push($this->table, 'action');
+                $this->table = array_values($this->table);
             }
         }
-        $this->data = $lastD;
-//        dd($lastD);
-
         return ['table' => $this->table, 'button' => $this->config->button, 'navbar' => $this->config->navbar, 'form' => $this->formData];
     }
 
