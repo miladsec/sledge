@@ -25,7 +25,7 @@ class Form
     public $value;
     public $placeholder;
     public $uniqueId;
-    public $selectConfig;
+    public $inputConfig;
     public $oldValue;
     public $col;
 
@@ -59,14 +59,17 @@ class Form
             case 'email':
                 $this->bodyData = view('sledge::element.input')->with('data', $this);
                 break;
-            case 'submit':
-                $this->footerData = view('sledge::element.submit')->with('data', $this);
-                break;
             case 'select':
                 $this->bodyData = view('sledge::element.select')->with('data', $this);
                 break;
             case 'multiselect':
                 $this->bodyData = view('sledge::element.multiselect')->with('data', $this);
+                break;
+            case 'radio':
+                $this->bodyData = view('sledge::element.radio')->with('data', $this);
+                break;
+            case 'submit':
+                $this->footerData = view('sledge::element.submit')->with('data', $this);
                 break;
             default:
                 dd('!');
@@ -146,9 +149,9 @@ class Form
         return $this;
     }
 
-    public function selectConfig($selectConfig): Form
+    public function inputConfig($inputConfig): Form
     {
-        $this->selectConfig = $selectConfig;
+        $this->inputConfig = $inputConfig;
         return $this;
     }
 

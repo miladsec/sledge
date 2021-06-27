@@ -2,9 +2,7 @@
 
 namespace MiladZamir\Sledge\Builder;
 
-use http\Env\Request;
-use MiladZamir\Sledge\Helper\FormConfig;
-use MiladZamir\Sledge\Helper\Helper;
+use \Illuminate\Http\JsonResponse;
 
 class Builder
 {
@@ -46,7 +44,7 @@ class Builder
         $this->script = $script->scriptFile;
     }
 
-    public function getDataTable($request): \Illuminate\Http\JsonResponse
+    public function getDataTable($request): JsonResponse
     {
         $mmx = $this->config->value->count();
         $start = (int)$request->input('start');
@@ -182,7 +180,7 @@ class Builder
         $this->form[] = new Form($this->config);
         return end($this->form);
     }
-
+/*
     public function file($name, $label, $validate = [], $value = null, $placeholder = null, $size = [], $class = null, $id = null)
     {
         $data = [
@@ -233,23 +231,6 @@ class Builder
         array_push($this->data['body'], view('sledge::element.textarea')->with('data', $data));
     }
 
-    public function radio($name, $label, $dKey, $validate = [], $value, $old = null, $class = null, $id = null)
-    {
-        $data = [
-            'uniqueId' => Helper::createUniqueString(5),
-            'name' => $name,
-            'label' => $label,
-            'dKey' => $dKey,
-            'validate' => $validate,
-            'value' => $value,
-            'old' => $old,
-            'class' => $class,
-            'id' => $id,
-        ];
-
-        array_push($this->data['body'], view('sledge::element.radios')->with('data', $data));
-    }
-
     public function date($name, $label, array $bind, $validate = [], $value = null, $old = null, $placeholder = null, $class = null, $id = null)
     {
         $data = [
@@ -286,11 +267,6 @@ class Builder
     public function customView($src, $data = null, $col = 'col-6')
     {
         array_push($this->data['body'], view('sledge::' . $src)->with(compact('data', 'col')));
-    }
-
-    public function setScript($bladeFile, $data = null)
-    {
-        $this->script = view('sledge::scripts.' . $bladeFile)->with(compact('data'));
-    }
+    }*/
 
 }
