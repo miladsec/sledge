@@ -29,7 +29,6 @@ class Form
     public $oldValue;
     public $col;
 
-
     public function __construct($config)
     {
         $this->config = $config;
@@ -48,6 +47,7 @@ class Form
         $this->footerData = view('sledge::element.closeForm');
         return $this;
     }
+
     public function input($type): Form
     {
         $this->type = $type;
@@ -67,6 +67,9 @@ class Form
                 break;
             case 'radio':
                 $this->bodyData = view('sledge::element.radio')->with('data', $this);
+                break;
+            case 'checkbox':
+                $this->bodyData = view('sledge::element.checkbox')->with('data', $this);
                 break;
             case 'submit':
                 $this->footerData = view('sledge::element.submit')->with('data', $this);
