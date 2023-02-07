@@ -1,9 +1,7 @@
-@extends('sledge::layouts.app')
-
-@section('breadcrumb')
-    @include('sledge::layouts.sections.breadcrumb')
+@extends('layouts.portal.app')
+@section('navLink')
+    {{   $cc['navLink'] }}
 @endsection
-
 @section('content')
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible mb-2" role="alert">
@@ -27,20 +25,20 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            @foreach($sledge['form']['header'] as $header)
-                                {{ $header }}
+                            @foreach($cc['data']['header'] as $h)
+                                {{ $h }}
                             @endforeach
 
                             <div class="row">
-                                @foreach($sledge['form']['body'] as $body)
-                                    <div class="{{ $body->data->col ?? '' }}">
-                                        {{ $body }}
+                                @foreach($cc['data']['body'] as $k=>$b)
+                                    <div class="col-md-6">
+                                        {{ $b }}
                                     </div>
                                 @endforeach
                             </div>
 
-                            @foreach($sledge['form']['footer'] as $footer)
-                                {{ $footer }}
+                            @foreach($cc['data']['footer'] as $f)
+                                {{ $f }}
                             @endforeach
                         </div>
                     </div>
@@ -49,6 +47,6 @@
         </div>
     </section>
 @endsection
-@section('js')
-    {!! (isset($sledge['script'])) ? $sledge['script'] : '' !!}
+@section('my_js')
+    {!! (isset($customScript)) ? $customScript : '' !!}
 @endsection

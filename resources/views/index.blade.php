@@ -1,7 +1,6 @@
-@extends('sledge::layouts.app')
-
-@section('breadcrumb')
-    @include('sledge::layouts.sections.breadcrumb')
+@extends('layouts.portal.app')
+@section('navLink')
+    {!!   $cc['navLink'] !!}
 @endsection
 
 @section('content')
@@ -14,28 +13,37 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body card-dashboard">
-                            @if(!empty($sledge['button']))
-                                @foreach($sledge['button'] as $btn)
-                                    <a href="{{ $btn['url'] }}" class="btn btn-primary mr-1 mb-1">
-                                        <i class="{{ $btn['icon'] }}"></i>
-                                        <span class="align-middle ml-25">{{ $btn['text'] }}</span>
+                            @if(!empty($cc['metaData']))
+                                @foreach($cc['metaData'] as $meta)
+                                    <a href="{{ $meta['url'] }}" class="btn btn-primary mr-1 mb-1">
+                                        <i class="{{ $meta['icon'] }}"></i>
+                                        <span class="align-middle ml-25">{{ $meta['text'] }}</span>
                                     </a>
                                 @endforeach
                             @endif
+
                             <div class="table-responsive">
                                 <table id="dataTable" class="table">
                                     <thead>
                                     <tr>
-                                        @foreach($sledge['table'] as $column)
-                                            @if($column == 'action')
-                                                <th>{{ config('sledge.index.actionColumnName') }}</th>
+                                        @foreach($cc['table'] as $c)
+                                            @if(isset($c['columnAction']))
+                                                <th>{{ 'عملیات' }}</th>
                                             @else
-                                                <th>{{ $column->title }}</th>
+                                                <th>{{ $c['text'] }}</th>
                                             @endif
                                         @endforeach
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    {{--@foreach($cc[0] as $key => $data)
+                                        <tr>
+                                            <td>{{ ++$key }}</td>
+                                            @foreach($data as $k=>$d)
+                                                <td>{!! $d !!} </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach--}}
                                     </tbody>
                                     <tfoot>
                                     <tr>
@@ -56,7 +64,7 @@
     </form>
 @endsection
 
-@section('js')
+@section('my_js')
     <script>
         $(document).ready(function () {
 
@@ -69,11 +77,12 @@
                     "dataSrc": function (json) {
                         return json.data;
                     },beforeSend: function() {
-                        $($('.table-responsive')).block({
-                            message: '<div class="bx bx-reset icon-spin font-medium-2" style="padding-bottom:1.75px"></div>',
+                        let block_ele = $('.table-responsive');
+                        $(block_ele).block({
+                            message: '<div class="spinner-grow text-primary" role="status"></div>',
                             overlayCSS: {
                                 backgroundColor: 'white',
-                                opacity: 0,
+                                opacity: 0.3,
                                 cursor: 'wait'
                             },
                             css: {
@@ -82,22 +91,24 @@
                                 backgroundColor: 'transparent'
                             }
                         });
+
                     },complete: function() {
-                        $($('.table-responsive')).unblock();
+                        let block_ele = $('.table-responsive');
+                        $(block_ele).unblock();
                     }
                 }
             });
 
             @if(Session::has('type'))
-                Swal.fire({
-                    position: 'top-center',
-                    type: '{{ Session::get('type') }}',
-                    title: '{{ Session::get('title') }}',
-                    showConfirmButton: false,
-                    timer: 2500,
-                    confirmButtonClass: 'btn btn-primary',
-                    buttonsStyling: false,
-                });
+            Swal.fire({
+                position: 'top-center',
+                type: '{{ Session::get('type') }}',
+                title: '{{ Session::get('title') }}',
+                showConfirmButton: false,
+                timer: 2500,
+                confirmButtonClass: 'btn btn-primary',
+                buttonsStyling: false,
+            });
             @endif
 
             $(document).on('click', 'a.confirm', function(e) {
@@ -117,7 +128,7 @@
                     if (result.value) {
                         let url = $(data).attr('href')
 
-                        if ($(data).hasClass('delete')){
+                        if ($(data).hasClass('dl')){
                             $("#deleteForm").attr('action', url).submit();
                         }else {
                             window.location.href = url;
@@ -126,10 +137,40 @@
                     }
                 });
             });
+
+
+            /*"ajax": {
+                "type": "GET",
+                    "url": "ss",
+                    "dataSrc": function (json) {
+                    return json.data;
+                }
+            }*/
+
+            /*var table = $('#tablename').DataTable( {
+                Processing: true,
+                serverSide: true,
+                ajax: '',
+                columns: [
+                    { data: 0 },
+                    { data: 1 },
+                    { data: 2 },
+                    { data: 3 },
+                    { data: 4 }
+                ]
+            } );*/
+            // console.log(table.page.info())
+            // $('#tablename').on( 'page.dt', function () {
+            //     var info = table.page.info();
+            //     console.log(table.page.info())
+            //     alert('Showing page: '+info.page+' of '+info.pages)
+            //     // $('#pageInfo').html( 'Showing page: '+info.page+' of '+info.pages );
+            // } );
         });
 
     </script>
-    @if(!empty($sledge['button']))
-        {!! $sledge['script'] !!}
-    @endif
+
+
+
+    {!! (isset($customScript)) ? $customScript : '' !!}
 @stop

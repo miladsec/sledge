@@ -44,17 +44,4 @@ class Helper
         return false;
     }
 
-    public static function routePrefix($currentRoute)
-    {
-        foreach (config('sledge.route.namePrefix') as $name=>$route){
-            if (str_contains($currentRoute, $name)){
-                return [$name, $route];
-            }
-        }
-    }
-    public static function flashMessage($type, $title)
-    {
-        session()->flash('type', $type);
-        session()->flash('title', $title);
-    }
 }
