@@ -1,12 +1,12 @@
 {
     "name": "miladzamir/sledge",
-    "description": "build awesome",
+    "description": "build awesome laravel app",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Milad Dehghan",
-            "email": "milawddehghan@gmail.com"
+            "email": "milad.dehghan@hotmail.com"
         }
     ],
     "minimum-stability": "dev",
