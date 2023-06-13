@@ -7,23 +7,49 @@ use MiladZamir\Sledge\Helper\Helper;
 
 class Config
 {
-    public $config;
     public $model;
     public $value;
     public $searchAttributes = [];
     public $module;
-    public $modelName;
     public $formMethod;
     public $formMethodField;
     public $formAction;
     public $button;
     public $breadcrumb;
 
-    public function __construct($config, $model, $modelName)
+    public function __construct($model)
     {
-        $this->config = $config;
         $this->model = $model;
-        $this->modelName = $modelName;
+    }
+
+    /**
+     * @param bool $auto
+     * @param $data
+     * @return $this
+     */
+    public function form(bool $auto = true, $data = null): Config
+    {
+        $model = lcfirst(class_basename($this->model));
+
+        if ($auto && empty($data)){
+            $requestRoute = request()->route()->getName();
+            if (str_contains($requestRoute, '.create')){
+                $this->formMethod = "POST";
+                $this->formMethodField = "POST";
+                $this->formAction = route($model .'.store');
+            }
+            if (str_contains($requestRoute, '.edit')){
+                $this->formMethod = "POST";
+                $this->formMethodField = "PATCH";
+                $this->formAction = route($model .'.update', [$model => request()->route('blog')]);
+            }
+        }else{
+            $this->formMethod = $data[0];
+            $this->formMethodField = $data[1];
+            $this->formAction = $data[2];
+        }
+
+        return $this;
     }
 
     public function queryConfig($orderBy = "id DESC", $where = null, $whereIn = null): Config
@@ -106,29 +132,5 @@ class Config
         return $this;
     }
 
-    public function formConfig($form = 'auto'): Config
-    {
-        $model = lcfirst(Helper::getModel($this->modelName));
-
-        if ($form == 'auto'){
-            $formConfig = Helper::routePrefix(request()->route()->getName());
-            if ($formConfig[0] == 'create'){
-                $this->formMethod = "POST";
-                $this->formMethodField = "POST";
-                $this->formAction = route($model .'.store');
-            }
-            if ($formConfig[0] == 'edit'){
-                $this->formMethod = "POST";
-                $this->formMethodField = "PATCH";
-                $this->formAction = route($model .'.update', [$model => request()->route('blog')]);
-            }
-        }else{
-            $this->formMethod = $form[0];
-            $this->formMethodField = $form[1];
-            $this->formAction = $form[2];
-        }
-
-        return $this;
-    }
 
 }

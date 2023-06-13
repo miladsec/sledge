@@ -4,20 +4,32 @@
 namespace MiladZamir\Sledge\Builder;
 
 
+use Closure;
+
 class Column
 {
-    public $name;
-    public $title;
-    public $callBack;
-    public $variables;
-    public $cssClass;
-    public $icon;
+    public string $name;
+    public string $title;
+    public Closure $callBack;
+    public string $css;
+    public string $icon;
+    public bool $isAction;
 
-    public function __construct($name)
+    public function __construct()
     {
-        $this->name = $name;
+        $this->isAction = false;
     }
 
+    public function name($name): Column
+    {
+        $this->name = $name;
+        return $this;
+    }
+    public function isAction($isAction): Column
+    {
+        $this->isAction = $isAction;
+        return $this;
+    }
     public function title($title): Column
     {
         $this->title = $title;
@@ -36,9 +48,9 @@ class Column
         return $this;
     }
 
-    public function cssClass($cssClass): Column
+    public function css($css): Column
     {
-        $this->cssClass = $cssClass;
+        $this->css = $css;
         return $this;
     }
 

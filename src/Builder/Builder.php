@@ -6,13 +6,12 @@ use Illuminate\Http\JsonResponse;
 
 class Builder
 {
-    private $model;
-    private $modelName;
-    private $table = [];
-    private $actions = [];
+    private mixed $model;
+    private array $table = [];
+    private array $actions = [];
     private $config;
     public $form;
-    public $formData = [
+    public array $formData = [
         'header' => [],
         'body' => [],
         'footer' => []
@@ -22,28 +21,34 @@ class Builder
     public function __construct($model)
     {
         $this->model = app($model);
-        $this->modelName = $model;
     }
 
-    public function column($name)
+    public function config(): Config
     {
-        $this->table[] = new Column($name);
-        return end($this->table);
-    }
-
-    public function config($config): Config
-    {
-        $this->config = new Config($config, $this->model, $this->modelName);
+        $this->config = new Config($this->model);
         return $this->config;
     }
 
-    public function script($scriptFile)
+    public function form()
+    {
+        $this->form[] = new Form($this->config);
+        return end($this->form);
+    }
+
+    public function column()
+    {
+        $this->table[] = new Column();
+        return end($this->table);
+    }
+
+
+    public function script($scriptFile): void
     {
         $script = new Script($scriptFile);
         $this->script = $script->scriptFile;
     }
 
-    public function getDataTable($request): JsonResponse
+    public function createDataTable($request): JsonResponse
     {
         $mmx = $this->config->value->count();
         $start = (int)$request->input('start');
@@ -171,101 +176,7 @@ class Builder
                 $this->table = array_values($this->table);
             }
         }
-        return ['table' => $this->table, 'button' => $this->config->button, 'breadcrumb' => $this->config->breadcrumb, 'form' => $this->formData, 'script' => $this->script];
+        return ['table' => $this->table, /*'button' => $this->config->button,*//* 'breadcrumb' => $this->config->breadcrumb,*/ 'form' => $this->formData, 'script' => $this->script];
     }
-
-    public function form()
-    {
-        $this->form[] = new Form($this->config);
-        return end($this->form);
-    }
-/*
-    public function file($name, $label, $validate = [], $value = null, $placeholder = null, $size = [], $class = null, $id = null)
-    {
-        $data = [
-            'uniqueId' => Helper::createUniqueString(5),
-            'name' => $name,
-            'validate' => $validate,
-            'value' => $value,
-            'label' => $label,
-            'placeholder' => $placeholder,
-            'size' => $size,
-            'class' => $class,
-            'id' => $id,
-        ];
-        array_push($this->data['body'], view('sledge::element.file')->with('data', $data));
-    }
-
-    public function checkbox($name, $label, $dKey, $validate = [], $value, $old = null, $class = null, $id = null)
-    {
-        $data = [
-            'uniqueId' => Helper::createUniqueString(5),
-            'name' => $name,
-            'label' => $label,
-            'dKey' => $dKey,
-            'validate' => $validate,
-            'value' => $value,
-            'old' => $old,
-            'class' => $class,
-            'id' => $id,
-        ];
-
-        array_push($this->data['body'], view('sledge::element.checkbox')->with('data', $data));
-    }
-
-    public function textarea($type, $name, $label, $validate = [], $value = null, $row = null, $placeholder = null, $class = null, $id = null)
-    {
-        $data = [
-            'uniqueId' => Helper::createUniqueString(5),
-            'type' => $type,
-            'name' => $name,
-            'value' => $value,
-            'validate' => $validate,//implode(" ", $validate)
-            'row' => $row,
-            'label' => $label,
-            'placeholder' => $placeholder,
-            'class' => $class,
-            'id' => $id,
-        ];
-        array_push($this->data['body'], view('sledge::element.textarea')->with('data', $data));
-    }
-
-    public function date($name, $label, array $bind, $validate = [], $value = null, $old = null, $placeholder = null, $class = null, $id = null)
-    {
-        $data = [
-            'uniqueId' => Helper::createUniqueString(5),
-            'name' => $name,
-            'label' => $label,
-            'bind' => $bind,
-            'validate' => $validate,
-            'value' => $value,
-            'old' => $old,
-            'placeholder' => $placeholder,
-            'class' => $class,
-            'id' => $id,
-        ];
-        array_push($this->data['body'], view('sledge::element.datePicker')->with('data', $data));
-    }
-
-    public function holder($selector, $label, array $bind, $value = null, $old = null, $class = null, $id = null)
-    {
-        $data = [
-            'uniqueId' => Helper::createUniqueString(5),
-            'selector' => $selector,
-            'label' => $label,
-            'bind' => $bind,
-            'value' => $value,
-            'old' => $old,
-            'class' => $class,
-            'id' => $id,
-        ];
-
-        array_push($this->data['body'], view('sledge::element.holder')->with('data', $data));
-    }
-
-    public function customView($src, $data = null, $col = 'col-6')
-    {
-        array_push($this->data['body'], view('sledge::' . $src)->with(compact('data', 'col')));
-    }*/
 
 }
