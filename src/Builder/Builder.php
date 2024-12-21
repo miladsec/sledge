@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 
 class Builder
 {
-    private mixed $model;
+    private $model;
     private array $table = [];
     private array $actions = [];
     private $config;
@@ -29,7 +29,7 @@ class Builder
         return $this->config;
     }
 
-    public function form()
+    public function form(): Form
     {
         $this->form[] = new Form($this->config);
         return end($this->form);
