@@ -22,18 +22,23 @@ class Processor
         $this->data = $data;
     }
 
-    public function create(): Processor
+    public function requestModification($request)
+    {
+        $this->request = $request;
+    }
+    public function create()
     {
         try {
             $result = $this->model->create($this->request->all());
-            if ($result)
+            if ($result){
                 $this->result = true;
+                return $result;
+            }
             else
                 $this->result = false;
         }catch (\Exception $e){
             $this->result = false;
         }
-        return $this;
     }
     public function update(): Processor
     {

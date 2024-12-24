@@ -15,6 +15,10 @@ class Column
     public string $icon;
     public bool $isAction;
 
+    public $variable;
+    public $route;
+    public $key;
+
     public function __construct()
     {
         $this->isAction = false;
@@ -57,6 +61,24 @@ class Column
     public function icon($icon): Column
     {
         $this->icon = $icon;
+        return $this;
+    }
+
+    public function variable($variable): Column
+    {
+        $this->variable = $variable;
+        return $this;
+    }
+
+    public function route($route): Column
+    {
+        $this->route = $route;
+        return $this;
+    }
+
+    public function key($key): Column
+    {
+        $this->key = $key;
         return $this;
     }
 

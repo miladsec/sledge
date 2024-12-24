@@ -30,6 +30,8 @@ class Form
     public $col;
     public $row;
 
+    public $selectKeyValue;
+
     public function __construct($config)
     {
         $this->config = $config;
@@ -100,10 +102,8 @@ class Form
     public function validate(array $validate): Form
     {
         $this->validate = '';
-        foreach ($validate as $value){
-            foreach ($value as $key => $v){
-                $this->validate .= ' '. $key .'="'. $v .'" ';
-            }
+        foreach ($validate as $key=>$value){
+            $this->validate .= ' '. $key .'='. $value .' ';
         }
         return $this;
     }
@@ -134,7 +134,7 @@ class Form
 
     public function novalidate($novalidate): Form
     {
-        $this->novalidate = $novalidate;
+        $this->novalidate = $novalidate ? 'novalidate': '';
         return $this;
     }
 
@@ -177,6 +177,12 @@ class Form
     public function row($row = '6'): Form
     {
         $this->row = $row;
+        return $this;
+    }
+
+    public function selectKeyValue($keyValue): Form
+    {
+        $this->selectKeyValue = $keyValue;
         return $this;
     }
 
