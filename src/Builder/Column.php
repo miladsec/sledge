@@ -11,13 +11,14 @@ class Column
     public string $name;
     public string $title;
     public Closure $callBack;
-    public string $css;
+    public array $cssClass;
     public string $icon;
     public bool $isAction;
 
     public $variable;
     public $route;
     public $key;
+    public bool $accessControl;
 
     public function __construct()
     {
@@ -52,9 +53,9 @@ class Column
         return $this;
     }
 
-    public function css($css): Column
+    public function cssClass($css): Column
     {
-        $this->css = $css;
+        $this->cssClass = $css;
         return $this;
     }
 
@@ -79,6 +80,12 @@ class Column
     public function key($key): Column
     {
         $this->key = $key;
+        return $this;
+    }
+
+    public function accessControl(bool $true)
+    {
+        $this->accessControl = $true;
         return $this;
     }
 

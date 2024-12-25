@@ -87,7 +87,11 @@ class Builder
                     $routeStrings = '';
                     foreach ($this->actions as $action){
                         $route = route($action->route, [$action->variable => $dat->{$action->key}]);
-                        $routeString = "<a href='$route' class='btn ' data-bs-toggle='tooltip' data-bs-placement='top' title='$action->title'><i class='las la-pen'></i></a>";
+
+                        $cssClasses = isset($action->cssClass) ? implode(" ", $action->cssClass) : '';
+                        $routeString = "<a href='$route' class='btn $cssClasses' data-bs-toggle='tooltip' data-bs-placement='top' title='$action->title'>
+                                            <i class='$action->icon'></i>
+                                        </a>";
                         $routeStrings .= $routeString;
                     }
                     $lastD[$k][$key] = $routeStrings;

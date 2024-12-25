@@ -43,9 +43,11 @@ class Processor
     public function update(): Processor
     {
         try {
-            $result = $this->data->update($this->request->all());
-            if ($result)
+            $result = $this->model->update($this->request->all());
+            if ($result){
                 $this->result = true;
+                return $this->model;
+            }
             else
                 $this->result = false;
         }catch (\Exception $e){
@@ -77,7 +79,7 @@ class Processor
             if ($haveAlert)
                 Helper::flashMessage('danger', config('sledge.alert.danger'));
         }
-        return redirect()->route(strtolower(Helper::getModel($this->modelName)). '.index');
+        return redirect()->route(lcfirst(Helper::getModel($this->modelName)). '.index');
     }
 
 }

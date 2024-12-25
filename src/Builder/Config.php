@@ -16,6 +16,10 @@ class Config
     public $formAction;
     public $button;
     public $breadcrumb;
+    /**
+     * @var mixed
+     */
+    public $editData;
 
     public function __construct($model)
     {
@@ -41,7 +45,7 @@ class Config
             if (str_contains($requestRoute, '.edit')){
                 $this->formMethod = "POST";
                 $this->formMethodField = "PATCH";
-                $this->formAction = route($model .'.update', [$model => request()->route('blog')]);
+                $this->formAction = route($model .'.update', [$model => request()->route($model)]);
             }
         }else{
             $this->formMethod = $data[0];
@@ -84,6 +88,11 @@ class Config
         return $this;
     }
 
+    public function editData($editData)
+    {
+        $this->editData = $editData;
+        return $this;
+    }
 
     public function createButton($button): Config
     {

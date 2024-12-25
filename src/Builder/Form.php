@@ -87,9 +87,14 @@ class Form
         return $this;
     }
 
-    public function name($name): Form
+    public function name($name, $isShowOldValue=true): Form
     {
         $this->name = $name;
+
+        if(isset($this->config->editData) && $isShowOldValue){
+            $this->oldValue = $this->config->editData->{$this->name};
+        }
+
         return $this;
     }
 
