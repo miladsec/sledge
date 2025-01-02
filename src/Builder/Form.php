@@ -60,6 +60,8 @@ class Form
             case 'number':
             case 'tel':
             case 'email':
+            case 'hidden':
+            case 'file':
                 $this->bodyData = view('sledge::element.input')->with('data', $this);
                 break;
             case 'select':

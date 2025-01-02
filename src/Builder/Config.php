@@ -35,7 +35,7 @@ class Config
 
         if ($auto && empty($data)){
             $requestRoute = request()->route()->getName();
-            if (str_contains($requestRoute, '.create')){
+            if (str_contains($requestRoute, '.create') || str_contains($requestRoute, '.index')){
                 $this->formMethod = "POST";
                 $this->formMethodField = "POST";
                 $this->formAction = route($model .'.store');
@@ -144,6 +144,12 @@ class Config
                     ];
                     break;
             }
+        }else{
+            $this->breadcrumb = [
+                $breadcrumb[0] => $breadcrumb[1],
+                $breadcrumb[2] => $breadcrumb[3],
+                $breadcrumb[4] => $breadcrumb[5],
+            ];
         }
         return $this;
     }
