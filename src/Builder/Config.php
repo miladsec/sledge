@@ -16,10 +16,8 @@ class Config
     public $formAction;
     public $button;
     public $breadcrumb;
-    /**
-     * @var mixed
-     */
     public $editData;
+    public $moduleName;
 
     public function __construct($model)
     {
@@ -78,9 +76,9 @@ class Config
         return $this;
     }
 
-    public function pageConfig($module, $button = 'auto', $breadcrumb = 'auto'): Config
+    public function pageConfig($moduleName, $button = 'auto', $breadcrumb = 'auto'): Config
     {
-        $this->module = $module;
+        $this->moduleName = $moduleName;
 
         $this->createButton($button);
         $this->createBreadcrumb($breadcrumb);
@@ -96,7 +94,7 @@ class Config
 
     public function createButton($button): Config
     {
-        $model = lcfirst(Helper::getModel($this->modelName));
+        $model = lcfirst(class_basename($this->model));
 
         if (!is_array($button) && $button == 'auto') {
             $this->button = array([
@@ -119,24 +117,33 @@ class Config
 
     public function createBreadcrumb($breadcrumb): Config
     {
-        $model = lcfirst(Helper::getModel($this->modelName));
+        $model = lcfirst(class_basename($this->model));
 
         if (!is_array($breadcrumb) && $breadcrumb == 'auto') {
-            $breadcrumbConfig = Helper::routePrefix(request()->route()->getName());
+            $routeName = request()->route()->getName();
 
-            if ($breadcrumbConfig[0] == 'edit'){
-                $this->breadcrumb = [
-                    '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
-                    $this->module => route('blog.index'),
-                    $breadcrumbConfig[1] => route($model.'.edit', [$model => request()->route('blog')])
-                ];
-                return $this;
+            switch ($routeName){
+                case $model.'.index':
+                    $this->breadcrumb = [
+                        config('sledge.route.homeRouteTitle') => route(config('sledge.route.homeRouteName')),
+                        $this->moduleName => route($model.'.index'),
+                    ];
+                    break;
+                case $model.'.create':
+                    $this->breadcrumb = [
+                        config('sledge.route.homeRouteTitle') => route(config('sledge.route.homeRouteName')),
+                        $this->moduleName => route($model.'.index'),
+                        'افزودن' => route($model.'.create'),
+                    ];
+                    break;
+                case $model.'.edit':
+                    $this->breadcrumb = [
+                        config('sledge.route.homeRouteTitle') => route(config('sledge.route.homeRouteName')),
+                        $this->moduleName => route($model.'.index'),
+                        'ویرایش' => route($model.'.edit', [$model => request()->route($model)])
+                    ];
+                    break;
             }
-            $this->breadcrumb = [
-                '<i class="bx bx-home-alt"></i>' => route(config('sledge.route.defaultRoute')),
-                $this->module => route('blog.index'),
-                $breadcrumbConfig[1] => route(request()->route()->getName())
-            ];
         }
         return $this;
     }
