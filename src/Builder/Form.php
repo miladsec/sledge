@@ -31,6 +31,7 @@ class Form
     public $row;
 
     public $selectKeyValue;
+    public $ajaxEvent;
 
     public function __construct($config)
     {
@@ -103,6 +104,11 @@ class Form
     public function placeholder($placeholder): Form
     {
         $this->placeholder = $placeholder;
+        return $this;
+    }
+    public function ajaxEvent($onName, $routeName, $routeVariable, $method='GET'): Form
+    {
+        $this->ajaxEvent = [$onName, $routeName, $routeVariable, $method];
         return $this;
     }
 
