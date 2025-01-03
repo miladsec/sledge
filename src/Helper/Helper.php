@@ -53,9 +53,11 @@ class Helper
         }
     }
 
-    public static function flashMessage($type, $title)
+    public static function flashMessage($type, $title, $text='')
     {
-        session()->flash('type', $type);
-        session()->flash('title', $title);
+        session()->flash('alert');
+        session()->flash('alert_title', $title);
+        session()->flash('alert_type', $type);
+        session()->flash('alert_text', $text);
     }
 }

@@ -4,6 +4,8 @@
 namespace MiladZamir\Sledge\Processor;
 
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use MiladZamir\Sledge\Helper\Helper;
 
 class Processor
@@ -11,15 +13,24 @@ class Processor
     public $model;
     public $modelName;
     public $request;
-    public $result;
+    public $operationResultStatus;
     public $data;
 
-    public function __construct($model, $request, $data = null)
+    public function __construct($model, $request, $isStoreUserAudit = true,$data = null)
     {
         $this->model = app($model);
         $this->modelName = $model;
         $this->request = $request;
         $this->data = $data;
+
+        if($isStoreUserAudit){
+            $this->storeUserAudit();
+        }
+    }
+
+    public function storeUserAudit()
+    {
+        $this->request['user_id'] = Auth::user()->id;
     }
 
     public function requestModification($request)
@@ -31,13 +42,14 @@ class Processor
         try {
             $result = $this->model->create($this->request->all());
             if ($result){
-                $this->result = true;
+                $this->operationResultStatus = true;
                 return $result;
             }
             else
-                $this->result = false;
+                $this->operationResultStatus = false;
         }catch (\Exception $e){
-            $this->result = false;
+            $this->operationResultStatus = false;
+            return $this->operationResultStatus;
         }
     }
     public function update(): Processor
@@ -45,13 +57,13 @@ class Processor
         try {
             $result = $this->model->update($this->request->all());
             if ($result){
-                $this->result = true;
+                $this->operationResultStatus = true;
                 return $this->model;
             }
             else
-                $this->result = false;
+                $this->operationResultStatus = false;
         }catch (\Exception $e){
-            $this->result = false;
+            $this->operationResultStatus = false;
         }
         return $this;
     }
@@ -59,26 +71,27 @@ class Processor
     public function delete(): Processor
     {
         try {
-            $result = $this->data->delete();
+            $result = $this->model->delete();
             if ($result)
-                $this->result = true;
+                $this->operationResultStatus = true;
             else
-                $this->result = false;
+                $this->operationResultStatus = false;
         }catch (\Exception $e){
-            $this->result = false;
+            $this->operationResultStatus = false;
         }
         return $this;
     }
 
-    public function returnBack($haveAlert = true): \Illuminate\Http\RedirectResponse
+    public function returnBack($haveAlert = true): RedirectResponse
     {
-        if ($this->result){
+        if ($this->operationResultStatus){
             if ($haveAlert)
                 Helper::flashMessage('success',config('sledge.alert.success'));
         }else{
             if ($haveAlert)
-                Helper::flashMessage('danger', config('sledge.alert.danger'));
+                Helper::flashMessage('error', config('sledge.alert.danger'));
         }
+
         return redirect()->route(lcfirst(Helper::getModel($this->modelName)). '.index');
     }
 
