@@ -15,11 +15,12 @@ class Processor
     public $request;
     public $operationResultStatus;
     public $data;
+    public $operationResultMessage;
 
     public function __construct($model, $request, $isStoreUserAudit = true,$data = null)
     {
-        $this->model = app($model);
-        $this->modelName = $model;
+        $this->model = is_string($model) ? app($model) : $model;
+        $this->modelName = is_string($model) ? $model : get_class($this->model);
         $this->request = $request;
         $this->data = $data;
 
@@ -49,10 +50,11 @@ class Processor
                 $this->operationResultStatus = false;
         }catch (\Exception $e){
             $this->operationResultStatus = false;
+            $this->operationResultMessage = $e->getMessage();
             return $this->operationResultStatus;
         }
     }
-    public function update(): Processor
+    public function update()
     {
         try {
             $result = $this->model->update($this->request->all());
@@ -64,6 +66,8 @@ class Processor
                 $this->operationResultStatus = false;
         }catch (\Exception $e){
             $this->operationResultStatus = false;
+            $this->operationResultMessage = $e->getMessage();
+            return $this->operationResultStatus;
         }
         return $this;
     }
@@ -88,8 +92,9 @@ class Processor
             if ($haveAlert)
                 Helper::flashMessage('success',config('sledge.alert.success'));
         }else{
+            dd($this->operationResultMessage);
             if ($haveAlert)
-                Helper::flashMessage('error', config('sledge.alert.danger'));
+                Helper::flashMessage('error', config('sledge.alert.danger'), $this->operationResultMessage);
         }
 
         return redirect()->route(lcfirst(Helper::getModel($this->modelName)). '.index');
