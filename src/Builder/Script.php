@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 
 class Script
 {
-    public Application|string|View|\Illuminate\Foundation\Application|Factory $scriptFile = '';
+    public $scriptFile = '';
 
     public function __construct($scriptFile)
     {

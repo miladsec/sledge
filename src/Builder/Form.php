@@ -107,7 +107,11 @@ class Form
         $this->placeholder = $placeholder;
         return $this;
     }
-
+    public function ajaxEvent($onName, $routeName, $routeVariable, $method='GET'): Form
+    {
+        $this->ajaxEvent = [$onName, $routeName, $routeVariable, $method];
+        return $this;
+    }
     public function validate(array $validate): Form
     {
         $this->validate = '';
