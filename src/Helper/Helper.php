@@ -53,11 +53,13 @@ class Helper
         }
     }
 
-    public static function flashMessage($type, $title, $text='')
+    public static function flashMessage($type, $title, $text='', $alertShowConfirmButton = false, $alertCloseTimer = 5000)
     {
         session()->flash('alert');
         session()->flash('alert_title', $title);
         session()->flash('alert_type', $type);
         session()->flash('alert_text', $text);
+        session()->flash('alert_show_confirm_button', $alertShowConfirmButton);
+        session()->flash('alert_close_timer', $alertCloseTimer);
     }
 }
