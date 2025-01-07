@@ -92,6 +92,9 @@ class Form
             case 'submit':
                 $this->footerData = view('sledge::element.submit')->with('data', $this);
                 break;
+            case 'datepicker':
+                $this->bodyData = view('sledge::element.datePicker')->with('data', $this);
+                break;
             default:
                 throw new \Exception("Form input view: {$type} Not Found!");
         }
@@ -217,6 +220,12 @@ class Form
     public function selectKeyValue($keyValue): Form
     {
         $this->selectKeyValue = $keyValue;
+        return $this;
+    }
+
+    public function timePicker($timePicker = false): Form
+    {
+        $this->timePicker = $timePicker;
         return $this;
     }
 

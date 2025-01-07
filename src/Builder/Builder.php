@@ -3,6 +3,7 @@
 namespace MiladZamir\Sledge\Builder;
 
 use Illuminate\Http\JsonResponse;
+use Morilog\Jalali\Jalalian;
 
 class Builder
 {
@@ -110,6 +111,7 @@ class Builder
                     continue;
                 }
                 $str = explode('.', $table->name);
+                $strDate = strpos($table->name, '_at');
                 $count = count($str);
                 if ($table->name == '#') {
                     $lastD[$k][$key] = $k + 1;
@@ -120,6 +122,11 @@ class Builder
                         $lastD[$k][$key] = $table->callBack($dat->{$str[0]})->callBack;
                         continue;
                     }
+                    if ($strDate){
+                        $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
+                        continue;
+                    }
+
                     $lastD[$k][$key] = $dat->{$str[0]};
                     continue;
                 }

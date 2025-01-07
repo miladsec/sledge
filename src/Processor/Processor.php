@@ -4,6 +4,7 @@
 namespace MiladZamir\Sledge\Processor;
 
 
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use MiladZamir\Sledge\Helper\Helper;
@@ -33,6 +34,8 @@ class Processor
         if($isStoreUserAudit){
             $this->storeUserAudit();
         }
+
+        $this->requestHandler();
     }
 
     public function storeUserAudit()
@@ -174,6 +177,26 @@ class Processor
         }
 
         return redirect()->route(lcfirst(Helper::getModel($this->modelName)). '.index');
+    }
+
+    private function requestHandler()
+    {
+        foreach ($this->request->all() as $key => $value) {
+            if (str_ends_with($key, '_at')) {
+                $newValue = $this->timestampToCarbon($value);
+                $this->request->merge([$key => $newValue]);
+            }
+        }
+    }
+
+    private function timestampToCarbon($timestamp, $wantsTimestamp = false)
+    {
+        $timestamp = substr($timestamp, 0, -3);
+
+        if ($wantsTimestamp)
+            return $timestamp;
+
+        return Carbon::createFromTimestamp($timestamp);
     }
 
 }
