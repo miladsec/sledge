@@ -7,6 +7,7 @@ namespace MiladZamir\Sledge\Processor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use MiladZamir\Sledge\Helper\Helper;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Processor
 {
@@ -16,6 +17,11 @@ class Processor
     public $operationResultStatus;
     public $data;
     public $operationResultMessage;
+
+    public $hasQrCode;
+    public $qrCodeFileds;
+    public $qrCode;
+    public $qrCodeFor;
 
     public function __construct($model, $request, $isStoreUserAudit = true,$data = null)
     {
@@ -38,12 +44,77 @@ class Processor
     {
         $this->request = $request;
     }
+
+    public function validate($request, $validation)
+    {
+        $request->validate($validation);
+    }
+
+    public function qrCode($for, $fields, $result = null, $separator = '-')
+    {
+        $this->hasQrCode = true;
+
+        if($result == null) {
+            $this->qrCodeFileds = $fields;
+            $this->qrCodeFor = $for;
+        }else{
+            $resultString = $for;
+            $lastKey = array_key_last($fields);
+
+            foreach ($fields as $key => $field) {
+                $resultString .= $key . ':' . $result->{$field};
+                if ($key !== $lastKey) {
+                    $resultString .= '|';
+                }
+            }
+
+            $this->qrCode = QrCode::size(120)->generate($resultString);
+
+        }
+        return $this;
+    }
+
+    public function storeQrCode($result)
+    {
+        $result->update(['qr_code' => $this->qrCode]);
+    }
+
     public function create()
     {
         try {
             $result = $this->model->create($this->request->all());
             if ($result){
                 $this->operationResultStatus = true;
+
+                if ($this->hasQrCode){
+                    $this->qrCode($this->qrCodeFor, $this->qrCodeFileds, $result);
+                    $this->storeQrCode($result);
+                }
+
+                return $result;
+            }
+            else
+                $this->operationResultStatus = false;
+        }catch (\Exception $e){
+            $this->operationResultStatus = false;
+            $this->operationResultMessage = $e->getMessage();
+            return $this->operationResultStatus;
+        }
+    }
+    public function createOrUpdate($searchKey = 'id')
+    {
+        try {
+            $result = $this->model->updateOrCreate(
+                [$searchKey => $this->request->all()[$searchKey]]
+                ,$this->request->all());
+            if ($result){
+                $this->operationResultStatus = true;
+
+                if ($this->hasQrCode){
+                    $this->qrCode($this->qrCodeFor, $this->qrCodeFileds, $result);
+                    $this->storeQrCode($result);
+                }
+
                 return $result;
             }
             else
@@ -60,6 +131,11 @@ class Processor
             $result = $this->model->update($this->request->all());
             if ($result){
                 $this->operationResultStatus = true;
+                if ($this->hasQrCode){
+                    $this->qrCode($this->qrCodeFor, $this->qrCodeFileds, $this->model);
+                    $this->storeQrCode($this->model);
+                }
+
                 return $this->model;
             }
             else

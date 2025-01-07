@@ -83,9 +83,19 @@ class Builder
         foreach ($data as $k => $dat) {
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
-                if ($table->isAction){
+                if ($table->isAction) {
                     $routeStrings = '';
-                    foreach ($this->actions as $action){
+                    foreach ($this->actions as $action) {
+                        if (isset($action->uiComponent)) {
+//                            return JsonResponse::create($action);
+                            $name = $action->name;
+                            $data = $action->uiComponentData;
+                            $routeStrings = view('sledge::' . $action->uiComponent)->with(compact('dat','name', 'data'));
+
+                            $routeStrings .= "<a type='button' class='btn rounded-pill btn-icon' data-bs-toggle='modal' data-bs-target='#modal-$dat->id'> 
+                                                <span class='tf-icons bx $action->icon'></span></a>";
+                            continue;
+                        }
                         $route = route($action->route, [$action->variable => $dat->{$action->key}]);
 
                         $cssClasses = isset($action->cssClass) ? implode(" ", $action->cssClass) : '';
@@ -144,27 +154,27 @@ class Builder
 
     public function render(): array
     {
-        if (!empty($this->form)){
-            foreach ($this->form as $form){
-                if (!empty($form->headerData)){
+        if (!empty($this->form)) {
+            foreach ($this->form as $form) {
+                if (!empty($form->headerData)) {
                     array_push($this->formData['header'], $form->headerData);
-                }elseif (!empty(!empty($form->bodyData))){
+                } elseif (!empty(!empty($form->bodyData))) {
                     array_push($this->formData['body'], $form->bodyData);
-                }elseif (!empty($form->footerData)){
+                } elseif (!empty($form->footerData)) {
                     array_push($this->formData['footer'], $form->footerData);
                 }
             }
         }
-        if (!empty($this->table) &&  is_array($this->table)){
+        if (!empty($this->table) && is_array($this->table)) {
             $haveAction = false;
-            foreach ($this->table as $key=>$table){
-                if ($table->isAction){
+            foreach ($this->table as $key => $table) {
+                if ($table->isAction) {
                     array_push($this->actions, $table);
                     unset($this->table[$key]);
                     $haveAction = true;
                 }
             }
-            if ($haveAction){
+            if ($haveAction) {
 //                array_push($this->table, $this->column()->isAction(true)->title(''));
                 $this->table = array_values($this->table);
             }

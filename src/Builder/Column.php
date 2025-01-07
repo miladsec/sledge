@@ -20,6 +20,10 @@ class Column
     public $key;
     public bool $accessControl;
 
+    public $id;
+    public $uiComponent;
+    public $uiComponentData;
+
     public function __construct()
     {
         $this->isAction = false;
@@ -62,6 +66,17 @@ class Column
     public function icon($icon): Column
     {
         $this->icon = $icon;
+        return $this;
+    }
+    public function uiComponent($uiComponent, $data): Column
+    {
+        $this->uiComponent = $uiComponent;
+        $this->uiComponentData =  $data;
+        return $this;
+    }
+    public function id($id): Column
+    {
+        $this->id = $id;
         return $this;
     }
 

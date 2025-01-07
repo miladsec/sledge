@@ -33,6 +33,8 @@ class Form
     public $selectKeyValue;
     public $timePicker;
     public $ajaxEvent;
+    public $qrCode;
+    public array $inputButton;
 
     public function __construct($config)
     {
@@ -53,6 +55,9 @@ class Form
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function input($type): Form
     {
         $this->type = $type;
@@ -81,11 +86,14 @@ class Form
             case 'textarea':
                 $this->bodyData = view('sledge::element.textarea')->with('data', $this);
                 break;
+            case 'qrcode':
+                $this->bodyData = view('sledge::element.qrcode')->with('data', $this);
+                break;
             case 'submit':
                 $this->footerData = view('sledge::element.submit')->with('data', $this);
                 break;
             default:
-                dd('!');
+                throw new \Exception("Form input view: {$type} Not Found!");
         }
 
         return $this;
@@ -107,6 +115,13 @@ class Form
         $this->placeholder = $placeholder;
         return $this;
     }
+
+    public function inputButton($title, $id, $cssClass): Form
+    {
+        $this->inputButton = [$title, $id, $cssClass];
+        return $this;
+    }
+
     public function ajaxEvent($onName, $routeName, $routeVariable, $responseValueKey, $oldIdSelected, $method='GET'): Form
     {
         $this->ajaxEvent = [$onName, $routeName, $routeVariable, $responseValueKey, $oldIdSelected, $method];
@@ -124,6 +139,12 @@ class Form
     public function value($value): Form
     {
         $this->value = $value;
+        return $this;
+    }
+
+    public function qrCode($qrCode): Form
+    {
+        $this->qrCode = $qrCode;
         return $this;
     }
 
