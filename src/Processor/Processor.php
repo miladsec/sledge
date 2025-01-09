@@ -128,27 +128,27 @@ class Processor
             return $this->operationResultStatus;
         }
     }
-    public function update()
+    public function update($model=null)
     {
         try {
-            $result = $this->model->update($this->request->all());
+            $result = $model->update($this->request->all());
             if ($result){
                 $this->operationResultStatus = true;
                 if ($this->hasQrCode){
-                    $this->qrCode($this->qrCodeFor, $this->qrCodeFileds, $this->model);
-                    $this->storeQrCode($this->model);
+                    $this->qrCode($this->qrCodeFor, $this->qrCodeFileds, $model);
+                    $this->storeQrCode($model);
                 }
-
                 return $this->model;
             }
-            else
+            else{
                 $this->operationResultStatus = false;
+                return false;
+            }
         }catch (\Exception $e){
             $this->operationResultStatus = false;
             $this->operationResultMessage = $e->getMessage();
             return $this->operationResultStatus;
         }
-        return $this;
     }
 
     public function delete(): Processor
@@ -171,7 +171,6 @@ class Processor
             if ($haveAlert)
                 Helper::flashMessage('success',config('sledge.alert.success'));
         }else{
-            dd($this->operationResultMessage);
             if ($haveAlert)
                 Helper::flashMessage('error', config('sledge.alert.danger'), $this->operationResultMessage);
         }

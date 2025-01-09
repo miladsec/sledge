@@ -78,7 +78,7 @@ class Form
                 $this->bodyData = view('sledge::element.multiselect')->with('data', $this);
                 break;
             case 'radio':
-                $this->bodyData = view('sledge::element.radio')->with('data', $this);
+                $this->bodyData = view('sledge::element.radios')->with('data', $this);
                 break;
             case 'checkbox':
                 $this->bodyData = view('sledge::element.checkbox')->with('data', $this);
