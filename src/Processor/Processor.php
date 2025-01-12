@@ -35,7 +35,8 @@ class Processor
             $this->storeUserAudit();
         }
 
-        $this->requestHandler();
+        if(!empty($request))
+            $this->requestHandler();
     }
 
     public function storeUserAudit()
