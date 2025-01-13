@@ -54,7 +54,7 @@ class Config
         return $this;
     }
 
-    public function queryConfig($orderBy = "id DESC", $where = null, $whereIn = null): Config
+    public function queryConfig($where = null, $whereIn = null, $orderBy = "id DESC"): Config
     {
         $this->value = $this->model;
 
