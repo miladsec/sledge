@@ -117,6 +117,11 @@ class Builder
                     $lastD[$k][$key] = $k + 1;
                     continue;
                 }
+                if(isset($table->view)){
+                    $data = $dat;
+                    $lastD[$k][$key] = view('sledge::'. $table->view)->with(compact('data'))->render();
+                    continue;
+                }
                 if ($count == 1) {
                     if (!empty($table->callBack)) {
                         $lastD[$k][$key] = $table->callBack($dat->{$str[0]})->callBack;
@@ -165,15 +170,18 @@ class Builder
             foreach ($this->form as $form) {
                 if (!empty($form->headerData)) {
                     array_push($this->formData['header'], $form->headerData);
-                } elseif (!empty(!empty($form->bodyData))) {
+                } elseif (!empty($form->bodyData)) {
                     array_push($this->formData['body'], $form->bodyData);
                 } elseif (!empty($form->footerData)) {
                     array_push($this->formData['footer'], $form->footerData);
                 }
             }
         }
+
         if (!empty($this->table) && is_array($this->table)) {
             $haveAction = false;
+
+            // Check for actions in the table
             foreach ($this->table as $key => $table) {
                 if ($table->isAction) {
                     array_push($this->actions, $table);
@@ -181,13 +189,20 @@ class Builder
                     $haveAction = true;
                 }
             }
+
+            // Only add the action column if an action exists
             if ($haveAction) {
-//                array_push($this->table, $this->column()->isAction(true)->title(''));
-                $this->table = array_values($this->table);
+                $this->table = array_values($this->table);  // Re-index the array after removing actions
+                $this->column()->isAction(true)->title('');
             }
-            $this->column()->isAction(true)->title('');
         }
-        return ['table' => $this->table, /*'button' => $this->config->button,*//* 'breadcrumb' => $this->config->breadcrumb,*/ 'form' => $this->formData, 'script' => $this->script];
+
+        return [
+            'table' => $this->table,
+            'form' => $this->formData,
+            'script' => $this->script
+        ];
     }
+
 
 }

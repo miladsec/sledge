@@ -23,6 +23,10 @@ class Column
     public $id;
     public $uiComponent;
     public $uiComponentData;
+    /**
+     * @var mixed
+     */
+    public $view;
 
     public function __construct()
     {
@@ -32,6 +36,11 @@ class Column
     public function name($name): Column
     {
         $this->name = $name;
+        return $this;
+    }
+    public function view($view): Column
+    {
+        $this->view = $view;
         return $this;
     }
     public function isAction($isAction): Column
