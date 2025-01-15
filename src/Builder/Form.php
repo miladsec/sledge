@@ -35,6 +35,7 @@ class Form
     public $ajaxEvent;
     public $qrCode;
     public array $inputButton;
+    public $isChecked;
 
     public function __construct($config)
     {
@@ -95,6 +96,9 @@ class Form
             case 'datepicker':
                 $this->bodyData = view('sledge::element.datePicker')->with('data', $this);
                 break;
+            case 'switch':
+                $this->bodyData = view('sledge::element.switch')->with('data', $this);
+                break;
             default:
                 throw new \Exception("Form input view: {$type} Not Found!");
         }
@@ -142,6 +146,11 @@ class Form
     public function value($value): Form
     {
         $this->value = $value;
+        return $this;
+    }
+    public function isChecked($isChecked=true): Form
+    {
+        $this->isChecked = $isChecked;
         return $this;
     }
 
