@@ -128,7 +128,14 @@ class Builder
                         continue;
                     }
                     if ($strDate){
-                        $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
+
+                        if(strpos($table->name, '_time_at')){
+//                            return JsonResponse::create($dat->{$str[0]});
+                            $lastD[$k][$key] = date('H:i', strtotime($dat->{$str[0]}));
+                        }
+                        else
+                            $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
+
                         continue;
                     }
 

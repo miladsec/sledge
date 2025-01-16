@@ -75,7 +75,7 @@ class Form
             case 'select':
                 $this->bodyData = view('sledge::element.select')->with('data', $this);
                 break;
-            case 'multiselect':
+            case 'multiSelect':
                 $this->bodyData = view('sledge::element.multiselect')->with('data', $this);
                 break;
             case 'radio':
@@ -95,6 +95,9 @@ class Form
                 break;
             case 'datepicker':
                 $this->bodyData = view('sledge::element.datePicker')->with('data', $this);
+                break;
+            case 'timePicker':
+                $this->bodyData = view('sledge::element.timePicker')->with('data', $this);
                 break;
             case 'switch':
                 $this->bodyData = view('sledge::element.switch')->with('data', $this);
