@@ -103,7 +103,11 @@ class Form
                 $this->bodyData = view('sledge::element.switch')->with('data', $this);
                 break;
             default:
-                throw new \Exception("Form input view: {$type} Not Found!");
+                try {
+                    $this->bodyData = view("sledge::custom_input.{$type}")->with('data', $this);
+                }catch (\Exception $exception){
+                    throw new \Exception("Form input view: {$type} Not Found!");
+                }
         }
 
         return $this;
