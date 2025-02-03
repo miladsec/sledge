@@ -15,9 +15,10 @@ class Builder
     public array $formData = [
         'header' => [],
         'body' => [],
+        'sectionBody' => [],
         'footer' => []
     ];
-    public $script;
+    public array $script = [];
 
     public function __construct($model)
     {
@@ -45,8 +46,7 @@ class Builder
 
     public function script($scriptFile): void
     {
-        $script = new Script($scriptFile);
-        $this->script = $script->scriptFile;
+        $this->script[] = new Script($scriptFile);
     }
 
     public function createDataTable($request): JsonResponse
@@ -181,6 +181,8 @@ class Builder
                     array_push($this->formData['body'], $form->bodyData);
                 } elseif (!empty($form->footerData)) {
                     array_push($this->formData['footer'], $form->footerData);
+                }elseif (!empty($form->sectionBodyData)) {
+                    array_push($this->formData['sectionBody'], $form->sectionBodyData);
                 }
             }
         }

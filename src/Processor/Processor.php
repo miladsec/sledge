@@ -87,6 +87,7 @@ class Processor
     {
         try {
             $result = $this->model->create($this->request->all());
+
             if ($result){
                 $this->operationResultStatus = true;
 

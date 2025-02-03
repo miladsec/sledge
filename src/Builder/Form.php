@@ -10,6 +10,7 @@ class Form
 {
     public $headerData;
     public $bodyData;
+    public $sectionBodyData;
     public $footerData;
     public $config;
     public $name;
@@ -47,6 +48,12 @@ class Form
     public function open(): Form
     {
         $this->headerData = view('sledge::element.openForm')->with('data', $this);
+        return $this;
+    }
+
+    public function section($path): Form
+    {
+        $this->sectionBodyData = view('sledge::custom_view.'.$path)->with('data', $this);
         return $this;
     }
 
