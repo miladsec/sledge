@@ -109,6 +109,9 @@ class Form
             case 'switch':
                 $this->bodyData = view('sledge::element.switch')->with('data', $this);
                 break;
+            case 'tagify':
+                $this->bodyData = view('sledge::element.tagify')->with('data', $this);
+                break;
             default:
                 try {
                     $this->bodyData = view("sledge::custom_input.{$type}")->with('data', $this);
@@ -120,12 +123,16 @@ class Form
         return $this;
     }
 
-    public function name($name, $isShowOldValue=true): Form
+    public function name($name, $editOldValuePath=null): Form
     {
         $this->name = $name;
 
-        if(isset($this->config->editData) && $isShowOldValue){
-            $this->oldValue = $this->config->editData->{$this->name};
+        if(isset($this->config->editData)){
+            if($editOldValuePath != null){
+                $this->oldValue = $this->config->editData->{$editOldValuePath};
+            }else{
+                $this->oldValue = $this->config->editData->{$this->name};
+            }
         }
 
         return $this;
@@ -251,6 +258,7 @@ class Form
         $this->timePicker = $timePicker;
         return $this;
     }
+
 
 
 }
