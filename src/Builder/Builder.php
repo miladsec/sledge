@@ -143,18 +143,22 @@ class Builder
                     continue;
                 }
                 if ($count > 1) {
-                    for ($i = 0; $i < count($str); $i++) {
-                        $dat = $dat->{$str[$i]};
-                        if ($dat == null) {
+                    foreach ($str as $relation) {
+                        if (!isset($dat->{$relation})) {
                             $lastD[$k][$key] = '-';
-                            break;
+                            continue 2; // Break out of both loops
                         }
+                        $dat = $dat->{$relation};
+                    }
+
+                    // Apply callback if defined
+                    if (!empty($table->callBack) && is_callable($table->callBack)) {
+                        $lastD[$k][$key] = call_user_func($table->callBack, $dat);
+                    } else {
                         $lastD[$k][$key] = $dat;
                     }
-                    if (!empty($table->callBack)) {
-                        $lastD[$k][$key] = $table->callBack($dat)->callBack;
-                    }
                 }
+
                 $dat = $secData;
             }
         }
