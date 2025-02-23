@@ -80,7 +80,9 @@ class Config
     {
         $this->moduleName = $moduleName;
 
-        $this->createButton($button);
+        if($button)
+            $this->createButton($button);
+
         $this->createBreadcrumb($breadcrumb);
 
         return $this;

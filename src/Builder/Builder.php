@@ -123,8 +123,8 @@ class Builder
                     continue;
                 }
                 if ($count == 1) {
-                    if (!empty($table->callBack)) {
-                        $lastD[$k][$key] = $table->callBack($dat->{$str[0]})->callBack;
+                    if (!empty($table->callBack) && is_callable($table->callBack)) {
+                        $lastD[$k][$key] = call_user_func($table->callBack, $dat->{$str[0]});
                         continue;
                     }
                     if ($strDate){

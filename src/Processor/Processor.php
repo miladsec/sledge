@@ -167,9 +167,9 @@ class Processor
         return $this;
     }
 
-    public function returnBack($haveAlert = true): RedirectResponse
+    public function returnBack($haveAlert = true, $success=false): RedirectResponse
     {
-        if ($this->operationResultStatus){
+        if ($this->operationResultStatus || $success){
             if ($haveAlert)
                 Helper::flashMessage('success',config('sledge.alert.success'));
         }else{

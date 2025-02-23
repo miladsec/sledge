@@ -54,11 +54,16 @@ class Column
         return $this;
     }
 
-    public function callBack($callBack): Column
+    public function callBack(callable $callBack): Column
     {
+        if (!$callBack instanceof Closure) {
+            $callBack = Closure::fromCallable($callBack);
+        }
+
         $this->callBack = $callBack;
         return $this;
     }
+
 
     public function action($variables = []): Column
     {
