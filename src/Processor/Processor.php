@@ -101,6 +101,7 @@ class Processor
             else
                 $this->operationResultStatus = false;
         }catch (\Exception $e){
+            dd($e);
             $this->operationResultStatus = false;
             $this->operationResultMessage = $e->getMessage();
             return $this->operationResultStatus;

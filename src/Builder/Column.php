@@ -13,6 +13,7 @@ class Column
     public Closure $callBack;
     public array $cssClass;
     public string $icon;
+    public string $queryString = '';
     public bool $isAction;
 
     public $variable;
@@ -80,6 +81,12 @@ class Column
     public function icon($icon): Column
     {
         $this->icon = $icon;
+        return $this;
+    }
+
+    public function queryString($queryString): Column
+    {
+        $this->queryString = $queryString;
         return $this;
     }
     public function uiComponent($uiComponent, $data): Column
