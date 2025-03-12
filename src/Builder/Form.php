@@ -37,6 +37,9 @@ class Form
     public $qrCode;
     public array $inputButton;
     public $isChecked;
+    public $groupTitle;
+    public $isRenderOutOfDiv;
+    public $isTagEnabled;
 
     public function __construct($config)
     {
@@ -112,6 +115,9 @@ class Form
             case 'tagify':
                 $this->bodyData = view('sledge::element.tagify')->with('data', $this);
                 break;
+            case 'group_title':
+                $this->bodyData = view('sledge::element.group_title')->with('data', $this);
+                break;
             default:
                 try {
                     $this->bodyData = view("sledge::custom_input.{$type}")->with('data', $this);
@@ -175,6 +181,17 @@ class Form
         return $this;
     }
 
+    public function groupTitle($title): Form
+    {
+        $this->groupTitle = $title;
+        return $this;
+    }
+    public function isRenderOutOfDiv($isRenderOutOfDiv=true): Form
+    {
+        $this->isRenderOutOfDiv = $isRenderOutOfDiv;
+        return $this;
+    }
+
     public function qrCode($qrCode): Form
     {
         $this->qrCode = $qrCode;
@@ -184,6 +201,11 @@ class Form
     public function label($label): Form
     {
         $this->label = $label;
+        return $this;
+    }
+    public function isTagEnabled($isTagEnabled=true): Form
+    {
+        $this->isTagEnabled = $isTagEnabled;
         return $this;
     }
 
