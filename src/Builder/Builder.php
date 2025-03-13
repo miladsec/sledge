@@ -133,8 +133,13 @@ class Builder
 //                            return JsonResponse::create($dat->{$str[0]});
                             $lastD[$k][$key] = date('H:i', strtotime($dat->{$str[0]}));
                         }
-                        else
-                            $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
+                        else{
+                            if (!empty($dat->{$str[0]}->timestamp)){
+                                $lastD[$k][$key] = Jalalian::forge($dat->{$str[0]}->timestamp)->format('h:i - %Y/%m/%d');
+                            }else{
+                                $lastD[$k][$key] = '';
+                            }
+                        }
 
                         continue;
                     }

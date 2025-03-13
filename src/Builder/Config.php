@@ -18,6 +18,7 @@ class Config
     public $breadcrumb;
     public $editData;
     public $moduleName;
+    public $dataTableSource;
 
     public function __construct($model)
     {
@@ -73,6 +74,12 @@ class Config
     public function dataTableConfig($searchAttributes = []): Config
     {
         $this->searchAttributes = $searchAttributes;
+        return $this;
+    }
+
+    public function dataTableSource($source = null): Config
+    {
+        $this->dataTableSource = $source;
         return $this;
     }
 
