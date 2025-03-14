@@ -3,6 +3,7 @@
 namespace MiladZamir\Sledge\Builder;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Schema;
 use Morilog\Jalali\Jalalian;
 
 class Builder
@@ -55,20 +56,52 @@ class Builder
         $start = (int)$request->input('start');
         $length = (int)$request->input('length');
 
-        if ($request->search['value'] != null) {
-            $data = $this->config->value;
-            foreach ($this->config->searchAttributes as $key => $sv) {
-                if ($key == 0) {
-                    $data->where($sv, 'LIKE', "%" . ($request->search['value'] . "%"));
-                } else {
-                    $data->orWhere($sv, 'LIKE', "%" . ($request->search['value'] . "%"));
+        $data = $this->config->value;
+        $searchValue = $request->search['value'] ?? null;
+
+        $searchValue = $request->search['value'] ?? null;
+
+        if (!empty($searchValue)) {
+            $columns = Schema::getColumnListing($data->getModel()->getTable()); // Get all table columns
+            $relations = ['order']; // Define relation names manually or dynamically
+
+            $data->where(function ($query) use ($columns, $searchValue) {
+                // Search in main table columns
+                foreach ($columns as $index => $column) {
+                    if ($index === 0) {
+                        $query->where($column, 'LIKE', "%{$searchValue}%");
+                    } else {
+                        $query->orWhere($column, 'LIKE', "%{$searchValue}%");
+                    }
                 }
+            });
+
+            // Search in related tables
+            foreach ($relations as $relation) {
+                $data->orWhereHas($relation, function ($subQuery) use ($searchValue) {
+                    // Get columns of the related table
+                    $relatedColumns = Schema::getColumnListing($subQuery->getModel()->getTable());
+
+                    // Ensure at least one column filters data
+                    $subQuery->where(function ($subQ) use ($relatedColumns, $searchValue) {
+                        foreach ($relatedColumns as $index => $column) {
+                            if ($index === 0) {
+                                $subQ->where($column, 'LIKE', "%{$searchValue}%");
+                            } else {
+                                $subQ->orWhere($column, 'LIKE', "%{$searchValue}%");
+                            }
+                        }
+                    });
+                });
             }
+
             $mmxF = $data->count();
             $data = $data->skip($start)->take($length)->get();
         } else {
             $data = $this->config->value->skip($start)->take($length)->get();
         }
+
+
 
         $page = ($start / $length) + 1;
         if (empty($page))
