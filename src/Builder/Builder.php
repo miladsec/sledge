@@ -63,7 +63,7 @@ class Builder
 
         if (!empty($searchValue)) {
             $columns = Schema::getColumnListing($data->getModel()->getTable()); // Get all table columns
-            $relations = ['order']; // Define relation names manually or dynamically
+            $relations = []; // TODO:: update here
 
             $data->where(function ($query) use ($columns, $searchValue) {
                 // Search in main table columns
