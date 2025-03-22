@@ -40,6 +40,10 @@ class Form
     public $groupTitle;
     public $isRenderOutOfDiv;
     public $isTagEnabled;
+    /**
+     * @var false|mixed
+     */
+    public $isDisabled;
 
     public function __construct($config)
     {
@@ -147,6 +151,11 @@ class Form
     public function placeholder($placeholder): Form
     {
         $this->placeholder = $placeholder;
+        return $this;
+    }
+    public function disabled($isDisabled=false): Form
+    {
+        $this->isDisabled = $isDisabled;
         return $this;
     }
 

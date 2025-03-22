@@ -101,7 +101,6 @@ class Processor
             else
                 $this->operationResultStatus = false;
         }catch (\Exception $e){
-            dd($e);
             $this->operationResultStatus = false;
             $this->operationResultMessage = $e->getMessage();
             return $this->operationResultStatus;
@@ -154,7 +153,7 @@ class Processor
         }
     }
 
-    public function delete(): Processor
+    public function delete()
     {
         try {
             $result = $this->model->delete();
@@ -164,6 +163,9 @@ class Processor
                 $this->operationResultStatus = false;
         }catch (\Exception $e){
             $this->operationResultStatus = false;
+            $this->operationResultMessage = $e->getMessage();
+            dd($this);
+            return $this->operationResultStatus;
         }
         return $this;
     }

@@ -133,7 +133,7 @@ class Builder
                         $route = route($action->route, [$action->variable => $dat->{$action->key}]);
 
                         $cssClasses = isset($action->cssClass) ? implode(" ", $action->cssClass) : '';
-                        $routeString = "<a href='$route$action->queryString' type='button' class='btn rounded-pill btn-icon $cssClasses'><span class='tf-icons bx $action->icon'></span></a>";
+                        $routeString = "<a data-bs-toggle='tooltip' title='$action->title' data-bs-placement='top' data-bs-html='true' href='$route$action->queryString' type='button' class='btn rounded-pill btn-icon $cssClasses'><span class='tf-icons bx $action->icon'></span></a>";
 //                        $routeString = "<a href='$route' class='btn $cssClasses' data-bs-toggle='tooltip' data-bs-placement='top' title='$action->title'>
 //                                            <i class='$action->icon'></i>
 //                                        </a>";
