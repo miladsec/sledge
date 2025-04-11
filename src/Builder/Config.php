@@ -3,6 +3,7 @@
 
 namespace MiladZamir\Sledge\Builder;
 
+use Illuminate\Support\Str;
 use MiladZamir\Sledge\Helper\Helper;
 
 class Config
@@ -106,8 +107,19 @@ class Config
         $model = lcfirst(class_basename($this->model));
 
         if (!is_array($button) && $button == 'auto') {
+
+            $currentRouteName = request()->route()->getName();
+            if (Str::endsWith($currentRouteName, 'index')) {
+                $createRoute = str_replace('index', 'create', $currentRouteName);
+                $routeParameters = request()->route()->parameters();
+                $createUrl = route($createRoute, $routeParameters ?? null);
+                // Use $createUrl for redirection or other purposes
+            }else{
+                $createUrl = route($model . '.create');
+            }
+
             $this->button = array([
-                'url' => route($model . '.create'),
+                'url' => $createUrl,
                 'text' => config('sledge.index.addLinkText'),
                 'icon' => config('sledge.index.addLinkIcon'),
             ]);
@@ -154,11 +166,7 @@ class Config
                     break;
             }
         }else{
-            $this->breadcrumb = [
-                $breadcrumb[0] => $breadcrumb[1],
-                $breadcrumb[2] => $breadcrumb[3],
-                $breadcrumb[4] => $breadcrumb[5],
-            ];
+            $this->breadcrumb = [config('sledge.route.homeRouteTitle') => route(config('sledge.route.homeRouteName'))] + $breadcrumb;
         }
         return $this;
     }

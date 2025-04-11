@@ -1,8 +1,6 @@
 <?php
 
-
 namespace MiladZamir\Sledge\Builder;
-
 
 use Closure;
 
@@ -16,7 +14,7 @@ class Column
     public string $queryString = '';
     public bool $isAction;
 
-    public $variable;
+    public $variables = [];
     public $route;
     public $key;
     public bool $accessControl;
@@ -28,6 +26,10 @@ class Column
      * @var mixed
      */
     public $view;
+    /**
+     * @var mixed
+     */
+    public $alertCustomDetailMessage;
 
     public function __construct()
     {
@@ -65,7 +67,6 @@ class Column
         return $this;
     }
 
-
     public function action($variables = []): Column
     {
         $this->variables = $variables;
@@ -89,21 +90,23 @@ class Column
         $this->queryString = $queryString;
         return $this;
     }
+
     public function uiComponent($uiComponent, $data): Column
     {
         $this->uiComponent = $uiComponent;
         $this->uiComponentData =  $data;
         return $this;
     }
+
     public function id($id): Column
     {
         $this->id = $id;
         return $this;
     }
 
-    public function variable($variable): Column
+    public function variables(array $variables): Column
     {
-        $this->variable = $variable;
+        $this->variables = $variables;
         return $this;
     }
 
@@ -119,10 +122,16 @@ class Column
         return $this;
     }
 
+    public function alertCustomDetailMessage($alertCustomDetailMessage): Column
+    {
+        $this->alertCustomDetailMessage = $alertCustomDetailMessage;
+        return $this;
+    }
+
     public function accessControl(bool $true)
     {
         $this->accessControl = $true;
         return $this;
     }
-
 }
+

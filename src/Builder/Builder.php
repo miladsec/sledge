@@ -50,6 +50,17 @@ class Builder
         $this->script[] = new Script($scriptFile);
     }
 
+    private function getNestedValue($object, $key) {
+        $keys = explode('.', $key);
+        foreach ($keys as $k) {
+            if (isset($object->{$k})) {
+                $object = $object->{$k};
+            } else {
+                return null;
+            }
+        }
+        return $object;
+    }
     public function createDataTable($request): JsonResponse
     {
         $mmx = $this->config->value->count();
@@ -118,31 +129,67 @@ class Builder
             $secData = clone $dat;
             foreach ($this->table as $key => $table) {
                 if ($table->isAction) {
+                    // Initialize the route string container
                     $routeStrings = '';
+
+                    // Iterate through all actions
                     foreach ($this->actions as $action) {
+                        // Check if the action has a UI component
                         if (isset($action->uiComponent)) {
-//                            return JsonResponse::create($action);
                             $name = $action->name;
                             $data = $action->uiComponentData;
-                            $routeStrings = view('sledge::' . $action->uiComponent)->with(compact('dat','name', 'data'));
 
+                            // Render the UI component view with data
+                            $routeStrings = view('sledge::' . $action->uiComponent)->with(compact('dat', 'name', 'data'));
+
+                            // Add the modal action button for the UI component
                             $routeStrings .= "<a type='button' class='btn rounded-pill btn-icon' data-bs-toggle='modal' data-bs-target='#modal-$dat->id'> 
-                                                <span class='tf-icons bx $action->icon'></span></a>";
-                            continue;
+                                <span class='tf-icons bx $action->icon'></span></a>";
+                            continue;  // Skip to the next action after processing UI component
                         }
-                        $route = route($action->route, [$action->variable => $dat->{$action->key}]);
 
+                        // Handle route with multiple variables
+                        if (!empty($action->variables)) {
+                            // Initialize the array for route variables
+                            $routeVariables = [];
+
+                            // Iterate through the action variables and resolve them using dot notation
+                            foreach ($action->variables as $varName => $varKey) {
+                                // Check if dot notation is used to access related fields
+                                $routeVariables[$varName] = $this->getNestedValue($dat, $varKey);
+                            }
+
+                            // Generate the route with the array of variables
+                            $route = route($action->route, $routeVariables);
+                        } else {
+                            // If no variables, generate the route normally
+                            $route = route($action->route);
+                        }
+
+                        // Append the query string if provided in the action
+                        $route .= !empty($action->queryString) ? $action->queryString : '';
+
+                        // Build the action button HTML
                         $cssClasses = isset($action->cssClass) ? implode(" ", $action->cssClass) : '';
-                        $routeString = "<a data-bs-toggle='tooltip' title='$action->title' data-bs-placement='top' data-bs-html='true' href='$route$action->queryString' type='button' class='btn rounded-pill btn-icon $cssClasses'><span class='tf-icons bx $action->icon'></span></a>";
-//                        $routeString = "<a href='$route' class='btn $cssClasses' data-bs-toggle='tooltip' data-bs-placement='top' title='$action->title'>
-//                                            <i class='$action->icon'></i>
-//                                        </a>";
 
+                        $alertCustomDetailMessage = '';
+                        if ($action->alertCustomDetailMessage){
+                            $alertCustomDetailMessage = $action->alertCustomDetailMessage;
+                        }
+
+                        $routeString = "<a data-bs-toggle='tooltip' date-alert-custom-detail-message='$alertCustomDetailMessage' title='$action->title' data-bs-placement='top' data-bs-html='true' href='$route' type='button' class='btn rounded-pill btn-icon $cssClasses'>
+                            <span class='tf-icons bx $action->icon'></span>
+                        </a>";
+
+                        // Append the generated button to the list of actions
                         $routeStrings .= $routeString;
                     }
+
+                    // Store the final route string for later use
                     $lastD[$k][$key] = $routeStrings;
-                    continue;
+                    continue;  // Proceed to the next table row
                 }
+
                 $str = explode('.', $table->name);
                 $strDate = strpos($table->name, '_at');
                 $count = count($str);
