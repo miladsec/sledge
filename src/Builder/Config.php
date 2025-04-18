@@ -56,7 +56,7 @@ class Config
         return $this;
     }
 
-    public function queryConfig($where = null, $whereIn = null, $orderBy = "id DESC"): Config
+    public function queryConfig($where = null, $whereIn = null, $orderBy = "id DESC", $distinct= null, $select = null, $groupBy=null, $sumColumn=null): Config
     {
         $this->value = $this->model;
 
@@ -68,6 +68,29 @@ class Config
 
         if ($whereIn != null)
             $this->value = $this->model->whereIn($whereIn[0], $whereIn[1]);
+
+        if ($distinct != null)
+            $this->value = $this->model->distinct();
+
+        if ($select != null) {
+            $this->value = $this->model->select($select);
+        }
+
+        // If $sumColumn is provided, add the sum of that column to the select clause
+        if ($sumColumn != null) {
+            $this->value = $this->value->addSelect(\DB::raw('SUM(' . $sumColumn . ') as ' . $sumColumn));
+        }
+
+        if ($groupBy != null) {
+            // Check if $groupBy is an array and use each column in the groupBy clause
+            if (is_array($groupBy)) {
+                foreach ($groupBy as $column) {
+                    $this->value = $this->value->groupBy($column);
+                }
+            } else {
+                $this->value = $this->value->groupBy($groupBy);
+            }
+        }
 
         return $this;
     }
