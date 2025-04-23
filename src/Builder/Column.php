@@ -13,6 +13,7 @@ class Column
     public string $icon;
     public string $queryString = '';
     public bool $isAction;
+    public bool $isExtra;
 
     public $variables = [];
     public $route;
@@ -34,6 +35,7 @@ class Column
     public function __construct()
     {
         $this->isAction = false;
+        $this->isExtra = false;
     }
 
     public function name($name): Column
@@ -49,6 +51,11 @@ class Column
     public function isAction($isAction): Column
     {
         $this->isAction = $isAction;
+        return $this;
+    }
+    public function isExtra($isExtra): Column
+    {
+        $this->isExtra = $isExtra;
         return $this;
     }
     public function title($title): Column

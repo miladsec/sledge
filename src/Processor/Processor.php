@@ -26,8 +26,11 @@ class Processor
 
     public function __construct($model, $request, $isStoreUserAudit = true,$data = null)
     {
-        $this->model = is_string($model) ? app($model) : $model;
-        $this->modelName = is_string($model) ? $model : get_class($this->model);
+        if ($model !== null) {
+            $this->model = is_string($model) ? app($model) : $model;
+            $this->modelName = is_string($model) ? $model : get_class($this->model);
+        }
+
         $this->request = $request;
         $this->data = $data;
 
@@ -157,6 +160,25 @@ class Processor
     {
         try {
             $result = $this->model->delete();
+            if ($result)
+                $this->operationResultStatus = true;
+            else
+                $this->operationResultStatus = false;
+        }catch (\Exception $e){
+            $this->operationResultStatus = false;
+            $this->operationResultMessage = $e->getMessage();
+            dd($this);
+            return $this->operationResultStatus;
+        }
+        return $this;
+    }
+
+    public function deleteGroup()
+    {
+        try {
+            foreach (explode(',', $this->request->ids) as $id){
+                $result = $this->model->find($id)->delete();
+            }
             if ($result)
                 $this->operationResultStatus = true;
             else
