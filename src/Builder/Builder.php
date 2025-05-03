@@ -175,7 +175,8 @@ class Builder
                 $isDateField = strpos($tableConfig->name, '_at') !== false;
 
                 if ($tableConfig->name === '#') {
-                    $rowData[$colIndex] = $index + 1;
+//                    $rowData[$colIndex] = $index + 1;
+                    $rowData[$colIndex] = $row->id;
                     continue;
                 }
 
