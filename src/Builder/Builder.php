@@ -73,15 +73,20 @@ class Builder
         $query = clone $allData;
 
         if (!empty($searchValue)) {
+            // Get the columns of the current table
             $columns = Schema::getColumnListing($query->getModel()->getTable());
-            $relations = []; // TODO: Define related models to search in
+
+            // Define related models to search in (e.g. 'posts', 'comments', etc.)
+            $relations = $this->config->searchAttributes ?? []; // You need to define relations here (e.g., 'user', 'category')
 
             $query->where(function ($q) use ($columns, $searchValue) {
-                foreach ($columns as $index => $column) {
+                // Search in all columns of the current model's table
+                foreach ($columns as $column) {
                     $q->orWhere($column, 'LIKE', "%{$searchValue}%");
                 }
             });
 
+            // Search through related models
             foreach ($relations as $relation) {
                 $query->orWhereHas($relation, function ($subQuery) use ($searchValue) {
                     $relatedColumns = Schema::getColumnListing($subQuery->getModel()->getTable());
@@ -94,9 +99,13 @@ class Builder
                 });
             }
 
+            // Get the filtered records count
             $filteredRecords = $query->count();
+
+            // Paginate the results
             $paginatedData = $query->skip($start)->take($length)->get();
         } else {
+            // When no search value is provided, return the paginated data without filtering
             $filteredRecords = $totalRecords;
             $paginatedData = $allData->skip($start)->take($length)->get();
         }
