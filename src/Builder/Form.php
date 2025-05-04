@@ -44,6 +44,7 @@ class Form
      * @var false|mixed
      */
     public $isDisabled;
+    public $isReadOnly;
 
     public function __construct($config)
     {
@@ -156,6 +157,11 @@ class Form
     public function disabled($isDisabled=false): Form
     {
         $this->isDisabled = $isDisabled;
+        return $this;
+    }
+    public function readOnly($isReadOnly=true): Form
+    {
+        $this->isReadOnly = $isReadOnly;
         return $this;
     }
 

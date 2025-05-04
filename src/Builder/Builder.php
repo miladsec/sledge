@@ -171,7 +171,7 @@ class Builder
                         $css = implode(' ', $action->cssClass ?? []);
                         $tooltip = $action->alertCustomDetailMessage ?? '';
 
-                        $actionsHtml = "<a data-bs-toggle='tooltip' date-alert-custom-detail-message='$tooltip' title='$action->title' data-bs-placement='top' data-bs-html='true' href='$route' type='button' class='btn rounded-pill btn-icon group-actions $css'>
+                        $actionsHtml .= "<a data-bs-toggle='tooltip' date-alert-custom-detail-message='$tooltip' title='$action->title' data-bs-placement='top' data-bs-html='true' href='$route' type='button' class='btn rounded-pill btn-icon group-actions $css'>
                                         <span class='tf-icons bx $action->icon'></span>
                                      </a>";
                     }
