@@ -65,7 +65,7 @@ class Builder
     public function createDataTable($request): JsonResponse
     {
         $allData = $this->config->value;
-        $totalRecords = $allData->count();
+        $totalRecords = $allData->get()->count();
         $start = (int) $request->input('start');
         $length = (int) $request->input('length');
         $searchValue = $request->search['value'] ?? null;
