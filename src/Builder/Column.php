@@ -32,6 +32,9 @@ class Column
      */
     public $alertCustomDetailMessage;
 
+    public $isDetail;
+
+
     public function __construct()
     {
         $this->isAction = false;
@@ -41,6 +44,11 @@ class Column
     public function name($name): Column
     {
         $this->name = $name;
+        return $this;
+    }
+    public function isDetail($isDetail=true): Column
+    {
+        $this->isDetail = $isDetail;
         return $this;
     }
     public function view($view): Column
