@@ -70,16 +70,32 @@ class Builder
         $length = (int) $request->input('length');
         $searchValue = $request->search['value'] ?? null;
 
-        $query = clone $allData;
+//        $query = clone $allData;
+
+        // Handle ordering
+        $orderCount = count($request->input('order', []));
+
+        for ($i = 0; $i < $orderCount; $i++) {
+            $orderColumnIndex = $request->input("order.$i.column");
+            $orderDirection = $request->input("order.$i.dir", 'asc');
+            $tableConfig = $this->table[$orderColumnIndex] ?? null;
+
+            if ($tableConfig && isset($tableConfig->name) && !$tableConfig->isAction && !$tableConfig->isExtra && $tableConfig->name !== '#' && $tableConfig->name !== 'checkbox') {
+                if (strpos($tableConfig->name, '.') === false) {
+                    $allData = $allData->orderBy($tableConfig->name, $orderDirection);
+                }
+                // Optional: for nested relations (user.name), you can sort manually after fetching or by joining if needed
+            }
+        }
 
         if (!empty($searchValue)) {
             // Get the columns of the current table
-            $columns = Schema::getColumnListing($query->getModel()->getTable());
+            $columns = Schema::getColumnListing($allData->getModel()->getTable());
 
             // Define related models to search in (e.g. 'posts', 'comments', etc.)
             $relations = $this->config->searchAttributes ?? []; // You need to define relations here (e.g., 'user', 'category')
 
-            $query->where(function ($q) use ($columns, $searchValue) {
+            $allData = $allData->where(function ($q) use ($columns, $searchValue) {
                 // Search in all columns of the current model's table
                 foreach ($columns as $column) {
                     $q->orWhere($column, 'LIKE', "%{$searchValue}%");
@@ -88,7 +104,7 @@ class Builder
 
             // Search through related models
             foreach ($relations as $relation) {
-                $query->orWhereHas($relation, function ($subQuery) use ($searchValue) {
+                $allData = $allData->orWhereHas($relation, function ($subQuery) use ($searchValue) {
                     $relatedColumns = Schema::getColumnListing($subQuery->getModel()->getTable());
 
                     $subQuery->where(function ($q) use ($relatedColumns, $searchValue) {
@@ -100,15 +116,14 @@ class Builder
             }
 
             // Get the filtered records count
-            $filteredRecords = $query->count();
+            $filteredRecords = $allData->count();
 
             // Paginate the results
-            $paginatedData = $query->skip($start)->take($length)->get();
         } else {
             // When no search value is provided, return the paginated data without filtering
             $filteredRecords = $totalRecords;
-            $paginatedData = $allData->skip($start)->take($length)->get();
         }
+        $paginatedData = $allData->skip($start)->take($length)->get();
 
         $page = max((int) floor($start / $length) + 1, 1);
         $request->request->add(['page' => $page]);
